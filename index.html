@@ -38,6 +38,7 @@ body{background:var(--dark);color:var(--text);font-family:'Poppins','Manjari',sa
 
 /* ═══ APP ═══ */
 #appShell{display:none}
+#judgeShell{display:none;position:fixed;inset:0;z-index:999;background:var(--dark);overflow-y:auto}
 
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:var(--dark2);border-right:1px solid rgba(20,20,40,0.084);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
@@ -330,6 +331,18 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div style="text-align:center;margin-top:14px">
         <span style="color:var(--muted);font-size:.78rem;font-family:'Inter','Manjari',sans-serif">Don't have an account? </span>
         <span onclick="toggleSignup(true)" style="color:var(--accent);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">Sign Up</span>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <span onclick="toggleJudgeLogin(true)" style="color:var(--accent);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">🧑‍⚖️ Judge Login</span>
+      </div>
+    </div>
+    <!-- JUDGE LOGIN FORM -->
+    <div id="judgeLoginForm" style="display:none">
+      <div class="login-field"><label>JUDGE NAME</label><input class="login-input" id="jlName" type="text" placeholder="Judge name" autocomplete="off" onkeydown="if(event.key==='Enter')enterJudgeLogin()"></div>
+      <button class="login-btn" id="judgeLoginBtn" onclick="enterJudgeLogin()" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">ENTER →</button>
+      <div class="login-error" id="judgeLoginError">❌ Error</div>
+      <div style="text-align:center;margin-top:14px">
+        <span onclick="toggleJudgeLogin(false)" style="color:var(--muted);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">← Back to Login</span>
       </div>
     </div>
     <!-- SIGN UP FORM -->
@@ -1111,13 +1124,9 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="page" id="page-judgepanel">
         <div class="prog-header">
           <h2>🧑‍⚖️ JUDGE PANEL</h2>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-primary btn-sm" id="jpTabManageBtn" onclick="switchJpTab('manage')">⚙️ Manage Judges</button>
-            <button class="btn btn-outline btn-sm" id="jpTabLoginBtn" onclick="switchJpTab('login')">🔑 Judge Login</button>
-          </div>
+          <div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Add judges below — they log in with just their name from the main Login screen (🧑‍⚖️ Judge Login)</div>
         </div>
 
-        <!-- MANAGE TAB (admin) -->
         <div id="jpManageTab">
           <div class="card" style="margin-bottom:14px">
             <div style="font-size:.85rem;font-weight:700;margin-bottom:10px">+ Add New Judge</div>
@@ -1141,11 +1150,6 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
             </div>
             <div id="jpHistoryList"></div>
           </div>
-        </div>
-
-        <!-- LOGIN / KIOSK TAB (judge-facing) -->
-        <div id="jpLoginTab" style="display:none">
-          <div id="jpKioskArea"></div>
         </div>
       </div>
 
@@ -1226,6 +1230,16 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
     <footer class="app-footer">© 2026 DEZIGN HUB · ALL RIGHTS RESERVED</footer>
   </div><!-- /main -->
 </div><!-- /appShell -->
+
+<!-- ════════ JUDGE SHELL (standalone, no admin login needed) ════════ -->
+<div id="judgeShell">
+  <div style="max-width:760px;margin:0 auto;padding:22px 16px 60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-size:1rem;font-weight:800;letter-spacing:.5px">🧑‍⚖️ JUDGE PANEL</div>
+    </div>
+    <div id="judgeShellArea"></div>
+  </div>
+</div>
 
 <!-- ════════ MODALS ════════ -->
 <!-- ANNOUNCEMENT MODAL -->
@@ -1636,6 +1650,7 @@ async function doLogin(){
 
   curUser=f;
   FB_DOC_ID = dataDocIdFor(f.username); // this user's own private Firestore document
+  try { localStorage.setItem('pr_last_admin', f.username); } catch(e){}
 
   // Now pull (and live-sync) THIS user's private data, then reload the
   // in-memory app state from it before rendering anything.
@@ -1696,9 +1711,74 @@ document.getElementById('liPass').addEventListener('keydown',e=>{if(e.key==='Ent
 function toggleSignup(show){
   document.getElementById('loginForm').style.display=show?'none':'block';
   document.getElementById('signupForm').style.display=show?'block':'none';
+  document.getElementById('judgeLoginForm').style.display='none';
   document.getElementById('resetBox').style.display='none';
   if(show){document.getElementById('suUser').focus();}
 }
+function toggleJudgeLogin(show){
+  document.getElementById('loginForm').style.display=show?'none':'block';
+  document.getElementById('signupForm').style.display='none';
+  document.getElementById('judgeLoginForm').style.display=show?'block':'none';
+  document.getElementById('resetBox').style.display='none';
+  document.getElementById('judgeLoginError').style.display='none';
+  if(show){document.getElementById('jlName').focus();}
+}
+// Judge login — no admin username/password needed. Uses whichever admin
+// account last logged in on THIS device/browser (its data is already
+// cached locally here), then matches the typed name against that
+// account's judge list set up under Judge Panel → Manage Judges.
+async function enterJudgeLogin(){
+  const btn = document.getElementById('judgeLoginBtn');
+  const err = document.getElementById('judgeLoginError');
+  err.style.display = 'none';
+  const name = document.getElementById('jlName').value.trim();
+  if (!name) { err.textContent = '❌ Enter your name'; err.style.display = 'block'; return; }
+
+  const lastAdmin = localStorage.getItem('pr_last_admin');
+  if (!lastAdmin) {
+    err.textContent = '❌ No event set up on this device yet — ask admin to log in here first';
+    err.style.display = 'block';
+    return;
+  }
+
+  if (fbUnsubscribe) { try{fbUnsubscribe();}catch(e){} fbUnsubscribe = null; }
+  fbListenerActive = false;
+  fbData = {};
+  curUser = { username: lastAdmin };
+  FB_DOC_ID = null; // judge sessions read/write local data only, never Firestore directly
+  reloadAllData();
+
+  const judge = jpJudges.find(j => j.name.trim().toLowerCase() === name.toLowerCase());
+  if (!judge) {
+    err.textContent = '❌ Name not found — check the spelling with admin';
+    err.style.display = 'block';
+    curUser = null;
+    return;
+  }
+
+  jpStandalone = true;
+  jpActiveJudge = judge.id;
+  jpActiveProg = null;
+
+  document.getElementById('jlName').value = '';
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('judgeShell').style.display = 'block';
+  history.pushState({judgeMode:true},'');
+  renderJpKiosk();
+}
+
+function exitJudgeMode(){
+  document.getElementById('judgeShell').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  toggleJudgeLogin(false);
+  jpStandalone = false;
+  jpActiveJudge = null;
+  jpActiveProg = null;
+  curUser = null;
+  FB_DOC_ID = null;
+  history.pushState({},'');
+}
+
 function toggleReset(){
   const b=document.getElementById('resetBox');
   b.style.display=b.style.display==='none'?'block':'none';
@@ -1769,7 +1849,11 @@ function doLogout(){
   try { if (window.__fbAuth) window.__fbAuth.signOut(window.__fbAuth.auth); } catch(e){}
   document.getElementById('appShell').style.display='none';document.getElementById('loginPage').style.display='flex';document.getElementById('liUser').value='';document.getElementById('liPass').value='';document.getElementById('loginError').style.display='none';
 }
-window.addEventListener('popstate',function(){if(curUser){history.pushState({loggedIn:true},'');}else{document.getElementById('appShell').style.display='none';document.getElementById('loginPage').style.display='flex';}});
+window.addEventListener('popstate',function(){
+  const judgeVisible = document.getElementById('judgeShell').style.display !== 'none';
+  if (judgeVisible) { exitJudgeMode(); return; }
+  if(curUser){history.pushState({loggedIn:true},'');}else{document.getElementById('appShell').style.display='none';document.getElementById('loginPage').style.display='flex';}
+});
 
 function updateClock(){
   const n=new Date();
@@ -5013,25 +5097,13 @@ let jpLocks = ld('pr_jp_locks', {});     // { [progId]: {judgeId, judgeName, ent
 let jpHistory = ld('pr_jp_history', []); // [{ts, judgeName, progId, progName, action, count}]
 let jpDrafts = ld('pr_jp_drafts', {});   // { 'progId_judgeId': entries[] } — in-progress autosave
 let jpTab = 'manage';
+let jpStandalone = false; // true when accessed via the pre-login Judge Login screen
 let jpActiveJudge = null; // judge id currently selected on the kiosk screen
 let jpActiveProg = null;  // program id currently open for entry
 let jpDraftEntries = [];  // working entries for the currently open program
 
 function renderJudgePanel() {
-  switchJpTab(jpTab);
-}
-
-function switchJpTab(tab) {
-  jpTab = tab;
-  const mgTab = document.getElementById('jpManageTab'), loginTab = document.getElementById('jpLoginTab');
-  const mgBtn = document.getElementById('jpTabManageBtn'), loginBtn = document.getElementById('jpTabLoginBtn');
-  if (mgTab) mgTab.style.display = tab === 'manage' ? 'block' : 'none';
-  if (loginTab) loginTab.style.display = tab === 'login' ? 'block' : 'none';
-  [mgBtn,loginBtn].forEach(b=>{ if(b){ b.classList.remove('btn-primary'); b.classList.remove('btn-outline'); }});
-  if (mgBtn) mgBtn.classList.add(tab === 'manage' ? 'btn-primary' : 'btn-outline');
-  if (loginBtn) loginBtn.classList.add(tab === 'login' ? 'btn-primary' : 'btn-outline');
-  if (tab === 'manage') renderJpManage();
-  else { jpActiveJudge = null; jpActiveProg = null; renderJpKiosk(); }
+  renderJpManage();
 }
 
 // ── Manage tab (admin) ──
@@ -5155,7 +5227,7 @@ function clearJpHistory() {
 
 // ── Login / Kiosk tab (judge-facing) ──
 function renderJpKiosk() {
-  const el = document.getElementById('jpKioskArea');
+  const el = document.getElementById(jpStandalone ? 'judgeShellArea' : 'jpKioskArea');
   if (!el) return;
   if (!jpActiveJudge) { renderJpJudgeSelect(el); return; }
   const judge = jpJudges.find(j => j.id === jpActiveJudge);
@@ -5196,7 +5268,7 @@ function renderJpProgList(el, judge) {
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <div style="font-size:.95rem;font-weight:700">🧑‍⚖️ ${esc(judge.name)}</div>
-      <button class="btn btn-outline btn-sm" onclick="jpBackToJudges()">← Switch Judge</button>
+      <button class="btn btn-outline btn-sm" onclick="${jpStandalone?'exitJudgeMode()':'jpBackToJudges()'}">${jpStandalone?'🚪 Exit':'← Switch Judge'}</button>
     </div>
     ${assigned.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
       ${assigned.map(p => {
