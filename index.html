@@ -386,6 +386,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="nav-item" data-page="publish" onclick="showPage('publish')" style="color:var(--green);border-left-color:rgba(0,229,122,.0)"><span class="ni">🚀</span>Publish</div>
       <div class="nav-section">TOOLS</div>
       <div class="nav-item" data-page="markentry" onclick="showPage('markentry')" style="color:var(--accent);font-weight:600"><span class="ni">📝</span>Mark Entry</div>
+      <div class="nav-item" data-page="judgepanel" onclick="showPage('judgepanel')"><span class="ni">🧑‍⚖️</span>Judge Panel</div>
       <div class="nav-item" data-page="templates" onclick="showPage('templates')"><span class="ni">🎨</span>Templates</div>
       <div class="nav-item" data-page="qrcards" onclick="showPage('qrcards')"><span class="ni">📱</span>QR Cards</div>
       <div class="nav-item" data-page="attendance" onclick="showPage('attendance')"><span class="ni">✅</span>Attendance</div>
@@ -1106,6 +1107,48 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
         </div>
       </div>
 
+      <!-- ── JUDGE PANEL ── -->
+      <div class="page" id="page-judgepanel">
+        <div class="prog-header">
+          <h2>🧑‍⚖️ JUDGE PANEL</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" id="jpTabManageBtn" onclick="switchJpTab('manage')">⚙️ Manage Judges</button>
+            <button class="btn btn-outline btn-sm" id="jpTabLoginBtn" onclick="switchJpTab('login')">🔑 Judge Login</button>
+          </div>
+        </div>
+
+        <!-- MANAGE TAB (admin) -->
+        <div id="jpManageTab">
+          <div class="card" style="margin-bottom:14px">
+            <div style="font-size:.85rem;font-weight:700;margin-bottom:10px">+ Add New Judge</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+              <div class="form-field" style="margin:0;flex:1;min-width:160px">
+                <label>JUDGE NAME</label>
+                <input class="form-input" id="jpNewName" placeholder="e.g. Anitha Teacher" style="padding:8px 12px" onkeydown="if(event.key==='Enter')addJpJudge()">
+              </div>
+              <button class="btn btn-primary btn-sm" style="height:38px" onclick="addJpJudge()">+ Add Judge</button>
+            </div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">ASSIGN PROGRAMS</label>
+            <div id="jpNewProgChecks" style="display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow-y:auto;padding:8px;background:var(--dark3);border-radius:8px"></div>
+          </div>
+
+          <div id="jpJudgeList"></div>
+
+          <div class="card" style="margin-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div style="font-size:.85rem;font-weight:700">📜 Submission History</div>
+              <button class="btn btn-outline btn-xs" onclick="clearJpHistory()">🗑 Clear</button>
+            </div>
+            <div id="jpHistoryList"></div>
+          </div>
+        </div>
+
+        <!-- LOGIN / KIOSK TAB (judge-facing) -->
+        <div id="jpLoginTab" style="display:none">
+          <div id="jpKioskArea"></div>
+        </div>
+      </div>
+
       <!-- ── ANALYTICS ── -->
       <div class="page" id="page-analytics">
         <div class="prog-header">
@@ -1626,6 +1669,10 @@ function reloadAllData(){
   if (typeof homeData !== 'undefined') homeData = ld('pr_home', {title:'', tagline:'', date:'', venue:'', desc:'', org:'', contact:'', primary:'#247DE1', accent:'#1A5FB4', themeStyle:'gradient', fontPair:'modern', textMode:'light'});
   if (typeof attendance !== 'undefined') attendance = ld('pr_attendance', {});
   meJudgeData = ld('pr_me_judges', {});
+  if (typeof jpJudges !== 'undefined') jpJudges = ld('pr_jp_judges', []);
+  if (typeof jpLocks !== 'undefined') jpLocks = ld('pr_jp_locks', {});
+  if (typeof jpHistory !== 'undefined') jpHistory = ld('pr_jp_history', []);
+  if (typeof jpDrafts !== 'undefined') jpDrafts = ld('pr_jp_drafts', {});
   regs = ld('pr_regs', []);
   if (typeof posterTplOpts !== 'undefined') posterTplOpts = ld('pr_poster_tpl', {eventName:'Annual Arts Fest 2026', edition:'', org:'', venue:'', desc:'', accent:'#e8d84a', date:''});
   if (typeof posterLogo !== 'undefined') posterLogo = ld('pr_poster_logo', '');
@@ -1748,7 +1795,7 @@ function showPage(pg){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pel=document.getElementById('page-'+pg);
   if(pel) pel.classList.add('active');
-  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',analytics:'ANALYTICS',history:'HISTORY',settings:'SETTINGS'};
+  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',judgepanel:'JUDGE PANEL',analytics:'ANALYTICS',history:'HISTORY',settings:'SETTINGS'};
   document.getElementById('topbarTitle').textContent=T[pg]||pg.toUpperCase();
   document.querySelector(`.nav-item[data-page="${pg}"]`)?.classList.add('active');
   closeSidebar();
@@ -1771,6 +1818,7 @@ function showPage(pg){
   if(pg==='awards') calcAwards();
   if(pg==='analytics') renderAnalytics();
   if(pg==='markentry') renderMarkEntry();
+  if(pg==='judgepanel') renderJudgePanel();
   if(pg==='settings'){
     const isAdmin=curUser&&(curUser.username==='admin'||curUser.isAdmin===true);
     if(!isAdmin){showToast('Admin access only!',true);showPage('dashboard');return;}
@@ -4959,6 +5007,355 @@ function renderMeDashStatus() {
   }).join('') + (withJudge.length > 6 ? `<div style="font-size:.7rem;color:var(--muted);padding:6px">+${withJudge.length-6} more</div>` : '');
 }
 
+// ═══ JUDGE PANEL ═══
+let jpJudges = ld('pr_jp_judges', []);   // [{id, name, progIds:[]}]
+let jpLocks = ld('pr_jp_locks', {});     // { [progId]: {judgeId, judgeName, entries, submittedAt} }
+let jpHistory = ld('pr_jp_history', []); // [{ts, judgeName, progId, progName, action, count}]
+let jpDrafts = ld('pr_jp_drafts', {});   // { 'progId_judgeId': entries[] } — in-progress autosave
+let jpTab = 'manage';
+let jpActiveJudge = null; // judge id currently selected on the kiosk screen
+let jpActiveProg = null;  // program id currently open for entry
+let jpDraftEntries = [];  // working entries for the currently open program
+
+function renderJudgePanel() {
+  switchJpTab(jpTab);
+}
+
+function switchJpTab(tab) {
+  jpTab = tab;
+  const mgTab = document.getElementById('jpManageTab'), loginTab = document.getElementById('jpLoginTab');
+  const mgBtn = document.getElementById('jpTabManageBtn'), loginBtn = document.getElementById('jpTabLoginBtn');
+  if (mgTab) mgTab.style.display = tab === 'manage' ? 'block' : 'none';
+  if (loginTab) loginTab.style.display = tab === 'login' ? 'block' : 'none';
+  [mgBtn,loginBtn].forEach(b=>{ if(b){ b.classList.remove('btn-primary'); b.classList.remove('btn-outline'); }});
+  if (mgBtn) mgBtn.classList.add(tab === 'manage' ? 'btn-primary' : 'btn-outline');
+  if (loginBtn) loginBtn.classList.add(tab === 'login' ? 'btn-primary' : 'btn-outline');
+  if (tab === 'manage') renderJpManage();
+  else { jpActiveJudge = null; jpActiveProg = null; renderJpKiosk(); }
+}
+
+// ── Manage tab (admin) ──
+function renderJpManage() {
+  const checksEl = document.getElementById('jpNewProgChecks');
+  if (checksEl) {
+    checksEl.innerHTML = progs.length ? progs.map(p => {
+      const cat = cats.find(c => c.id === p.catId);
+      return `<label style="display:flex;align-items:center;gap:6px;font-size:.78rem;background:var(--dark2);padding:5px 10px;border-radius:6px;cursor:pointer">
+        <input type="checkbox" class="jpNewProgCheck" value="${p.id}" style="accent-color:var(--accent)"> ${esc(p.name)}${cat?' <span style="color:var(--muted)">— '+esc(cat.name)+'</span>':''}
+      </label>`;
+    }).join('') : `<span style="font-size:.75rem;color:var(--muted)">No programs yet — add programs first</span>`;
+  }
+
+  const listEl = document.getElementById('jpJudgeList');
+  if (listEl) {
+    if (!jpJudges.length) {
+      listEl.innerHTML = `<div class="empty-state"><div class="ei">🧑‍⚖️</div>No judges added yet</div>`;
+    } else {
+      listEl.innerHTML = jpJudges.map(j => {
+        const assigned = progs.filter(p => j.progIds.includes(p.id));
+        const chips = assigned.length ? assigned.map(p => {
+          const lock = jpLocks[p.id];
+          const isThisJudge = lock && String(lock.judgeId) === String(j.id);
+          const status = lock ? (isThisJudge ? '✅ Submitted' : `🔒 Locked (${esc(lock.judgeName)})`) : '⏳ Pending';
+          const color = lock ? (isThisJudge ? 'var(--green)' : 'var(--muted)') : 'var(--accent)';
+          return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--dark3);padding:6px 10px;border-radius:7px;font-size:.74rem;margin-bottom:5px">
+            <span>${esc(p.name)}</span>
+            <span style="display:flex;align-items:center;gap:6px">
+              <span style="color:${color};font-weight:600">${status}</span>
+              ${lock ? `<button class="btn btn-outline btn-xs" onclick="unlockJpProg(${p.id})">🔓 Unlock</button>` : ''}
+            </span>
+          </div>`;
+        }).join('') : `<span style="font-size:.72rem;color:var(--muted)">No programs assigned</span>`;
+
+        return `<div class="card" style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:.9rem;font-weight:700;color:var(--accent)">👤 ${esc(j.name)}</div>
+            <button class="btn btn-red btn-xs" onclick="deleteJpJudge('${j.id}')">🗑 Remove</button>
+          </div>
+          <div style="margin-bottom:8px">${chips}</div>
+          <details>
+            <summary style="cursor:pointer;font-size:.72rem;color:var(--muted)">✏️ Edit assigned programs</summary>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding:8px;background:var(--dark3);border-radius:8px">
+              ${progs.length ? progs.map(p => `<label style="display:flex;align-items:center;gap:6px;font-size:.76rem;background:var(--dark2);padding:5px 10px;border-radius:6px;cursor:pointer">
+                <input type="checkbox" ${j.progIds.includes(p.id)?'checked':''} onchange="toggleJpJudgeProg('${j.id}',${p.id},this.checked)" style="accent-color:var(--accent)"> ${esc(p.name)}
+              </label>`).join('') : '<span style="font-size:.72rem;color:var(--muted)">No programs yet</span>'}
+            </div>
+          </details>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  renderJpHistory();
+}
+
+function addJpJudge() {
+  const name = document.getElementById('jpNewName').value.trim();
+  if (!name) { showToast('Judge name required!', true); return; }
+  const checked = Array.from(document.querySelectorAll('.jpNewProgCheck:checked')).map(c => parseInt(c.value));
+  jpJudges.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,6), name, progIds: checked });
+  sd('pr_jp_judges', jpJudges);
+  document.getElementById('jpNewName').value = '';
+  document.querySelectorAll('.jpNewProgCheck').forEach(c => c.checked = false);
+  renderJpManage();
+  showToast('Judge added ✓');
+}
+
+function deleteJpJudge(id) {
+  if (!confirm('Remove this judge? Assigned programs will need reassigning.')) return;
+  jpJudges = jpJudges.filter(j => j.id !== id);
+  sd('pr_jp_judges', jpJudges);
+  renderJpManage();
+  showToast('Judge removed');
+}
+
+function toggleJpJudgeProg(judgeId, progId, checked) {
+  const j = jpJudges.find(x => x.id === judgeId);
+  if (!j) return;
+  if (checked) { if (!j.progIds.includes(progId)) j.progIds.push(progId); }
+  else { j.progIds = j.progIds.filter(id => id !== progId); }
+  sd('pr_jp_judges', jpJudges);
+  renderJpManage();
+}
+
+function unlockJpProg(progId) {
+  const lock = jpLocks[progId];
+  if (!lock) return;
+  if (!confirm('Unlock this program so the judge can resubmit? The previous submission stays in history.')) return;
+  const prog = progs.find(p => p.id === progId);
+  jpHistory.unshift({ ts: new Date().toISOString(), judgeName: lock.judgeName, progId, progName: prog ? prog.name : '?', action: 'unlock', count: (lock.entries||[]).length });
+  sd('pr_jp_history', jpHistory);
+  delete jpLocks[progId];
+  sd('pr_jp_locks', jpLocks);
+  renderJpManage();
+  showToast('Unlocked — judge can resubmit');
+}
+
+function renderJpHistory() {
+  const el = document.getElementById('jpHistoryList');
+  if (!el) return;
+  if (!jpHistory.length) { el.innerHTML = `<div class="empty-state"><div class="ei">📜</div>No submissions yet</div>`; return; }
+  el.innerHTML = `<div style="overflow-x:auto"><table class="lb-table" style="width:100%">
+    <thead><tr><th>TIME</th><th>JUDGE</th><th>PROGRAM</th><th>ACTION</th><th>MARKS</th></tr></thead>
+    <tbody>${jpHistory.slice(0,100).map(h => {
+      const d = new Date(h.ts);
+      const timeStr = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + ' · ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const actionLabel = h.action === 'submit' ? '<span style="color:var(--green)">✅ Submitted</span>' : '<span style="color:var(--red)">🔓 Unlocked</span>';
+      return `<tr><td style="font-size:.72rem;color:var(--muted)">${timeStr}</td><td>${esc(h.judgeName)}</td><td>${esc(h.progName)}</td><td>${actionLabel}</td><td>${h.count}</td></tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+function clearJpHistory() {
+  if (!confirm('Clear all submission history? This does not affect already-submitted scores.')) return;
+  jpHistory = []; sd('pr_jp_history', jpHistory);
+  renderJpHistory();
+  showToast('History cleared');
+}
+
+// ── Login / Kiosk tab (judge-facing) ──
+function renderJpKiosk() {
+  const el = document.getElementById('jpKioskArea');
+  if (!el) return;
+  if (!jpActiveJudge) { renderJpJudgeSelect(el); return; }
+  const judge = jpJudges.find(j => j.id === jpActiveJudge);
+  if (!judge) { jpActiveJudge = null; renderJpJudgeSelect(el); return; }
+  if (jpActiveProg !== null) { renderJpEntryScreen(el, judge); return; }
+  renderJpProgList(el, judge);
+}
+
+function renderJpJudgeSelect(el) {
+  if (!jpJudges.length) {
+    el.innerHTML = `<div class="empty-state"><div class="ei">🧑‍⚖️</div>No judges set up yet — ask admin to add judges under "Manage Judges"</div>`;
+    return;
+  }
+  el.innerHTML = `<div style="font-size:.85rem;color:var(--muted);margin-bottom:14px">👋 Select your name to continue</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px">
+      ${jpJudges.map(j => `<div onclick="selectJpJudge('${j.id}')" style="cursor:pointer;background:var(--dark3);border:1px solid rgba(36,125,225,.15);border-radius:12px;padding:20px 14px;text-align:center">
+        <div style="font-size:1.6rem;margin-bottom:6px">🧑‍⚖️</div>
+        <div style="font-weight:700;font-size:.9rem">${esc(j.name)}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:3px">${j.progIds.length} program${j.progIds.length===1?'':'s'}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function selectJpJudge(id) {
+  jpActiveJudge = id;
+  jpActiveProg = null;
+  renderJpKiosk();
+}
+
+function jpBackToJudges() {
+  jpActiveJudge = null;
+  jpActiveProg = null;
+  renderJpKiosk();
+}
+
+function renderJpProgList(el, judge) {
+  const assigned = progs.filter(p => judge.progIds.includes(p.id));
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:.95rem;font-weight:700">🧑‍⚖️ ${esc(judge.name)}</div>
+      <button class="btn btn-outline btn-sm" onclick="jpBackToJudges()">← Switch Judge</button>
+    </div>
+    ${assigned.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+      ${assigned.map(p => {
+        const lock = jpLocks[p.id];
+        const cat = cats.find(c => c.id === p.catId);
+        return `<div onclick="openJpProg(${p.id})" style="cursor:pointer;background:var(--dark3);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px">
+          <div style="font-weight:700;font-size:.88rem;margin-bottom:4px">${esc(p.name)}</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:8px">${cat?esc(cat.name):''}</div>
+          <div style="font-size:.74rem;font-weight:600;color:${lock?'var(--green)':'var(--accent)'}">${lock?'✅ Submitted — view':'⏳ Pending — tap to enter marks'}</div>
+        </div>`;
+      }).join('')}
+    </div>` : `<div class="empty-state"><div class="ei">📭</div>No programs assigned to you yet</div>`}
+  `;
+}
+
+function jpDraftKey(progId, judgeId) { return progId + '_' + judgeId; }
+
+function openJpProg(progId) {
+  jpActiveProg = progId;
+  const judge = jpJudges.find(j => j.id === jpActiveJudge);
+  const lock = jpLocks[progId];
+  if (lock) {
+    jpDraftEntries = [...(lock.entries || [])];
+  } else {
+    const draft = jpDrafts[jpDraftKey(progId, judge.id)];
+    jpDraftEntries = draft ? [...draft] : [];
+  }
+  renderJpKiosk();
+}
+
+function jpBackToProgList() {
+  jpActiveProg = null;
+  renderJpKiosk();
+}
+
+function renderJpEntryScreen(el, judge) {
+  const prog = progs.find(p => p.id === jpActiveProg);
+  const lock = jpLocks[jpActiveProg];
+  const locked = !!lock;
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <div style="font-size:.95rem;font-weight:700">${esc(prog?prog.name:'')}</div>
+        <div style="font-size:.72rem;color:var(--muted)">🧑‍⚖️ ${esc(judge.name)}</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="jpBackToProgList()">← Back</button>
+    </div>
+    ${locked ? `<div style="background:rgba(12,168,94,.08);border:1px solid rgba(12,168,94,.25);color:var(--green);font-size:.78rem;padding:10px 14px;border-radius:8px;margin-bottom:12px">✅ Submitted by ${esc(lock.judgeName)} — locked. Ask admin to unlock if a correction is needed.</div>` : ''}
+    <div class="card">
+      ${!locked ? `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end">
+        <div class="form-field" style="margin:0;flex:0 0 100px"><label>CHEST #</label>
+          <input class="form-input" id="jpAddChest" placeholder="e.g. 101" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addJpRow()"></div>
+        <div class="form-field" style="margin:0;flex:0 0 80px"><label>CODE</label>
+          <input class="form-input" id="jpAddCode" placeholder="A" style="padding:7px 10px;text-transform:uppercase" maxlength="4" onkeydown="if(event.key==='Enter')addJpRow()"></div>
+        <div class="form-field" style="margin:0;flex:1;min-width:120px"><label>MARK</label>
+          <input class="form-input" id="jpAddMark" type="number" placeholder="0" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addJpRow()"></div>
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0;height:38px" onclick="addJpRow()">+ Add</button>
+      </div>` : ''}
+      <div style="overflow-x:auto">
+        <table class="lb-table" style="width:100%">
+          <thead><tr><th>CHEST #</th><th>CODE</th><th>PARTICIPANT</th><th>MARKS</th>${locked?'':'<th></th>'}</tr></thead>
+          <tbody id="jpTableBody"></tbody>
+        </table>
+      </div>
+      ${!locked ? `<div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="btn btn-primary" onclick="submitJpMarks()">Submit Marks →</button>
+      </div>` : ''}
+    </div>
+  `;
+  renderJpTable(locked);
+}
+
+function renderJpTable(locked) {
+  const tbody = document.getElementById('jpTableBody');
+  if (!tbody) return;
+  if (!jpDraftEntries.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);font-size:.82rem">No entries yet${locked?'':' — add chest numbers above'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = jpDraftEntries.map(e => `<tr>
+    <td style="font-family:'Inter','Manjari',sans-serif;font-weight:700;color:var(--accent)">${esc(e.chest)}</td>
+    <td>${locked ? esc(e.code) : `<input class="form-input" value="${esc(e.code)}" maxlength="4" style="width:60px;padding:5px 8px;text-align:center;font-weight:700;text-transform:uppercase" onchange="updateJpEntry('${e.chest}','code',this.value.toUpperCase())" oninput="this.value=this.value.toUpperCase()">`}</td>
+    <td style="font-size:.82rem">${e.name ? esc(e.name) : '<span style="color:var(--muted)">—</span>'}</td>
+    <td>${locked ? `<b>${esc(e.mark)}</b>` : `<input type="number" class="form-input" value="${esc(e.mark)}" placeholder="—" min="0" style="width:80px;padding:5px 8px;text-align:center;font-weight:700" onchange="updateJpEntry('${e.chest}','mark',this.value)" oninput="updateJpEntry('${e.chest}','mark',this.value)">`}</td>
+    ${locked?'':`<td><button class="btn btn-red btn-xs" onclick="deleteJpRow('${e.chest}')">✕</button></td>`}
+  </tr>`).join('');
+}
+
+function jpSaveDraft() {
+  const judge = jpJudges.find(j => j.id === jpActiveJudge);
+  if (!judge || jpActiveProg === null) return;
+  jpDrafts[jpDraftKey(jpActiveProg, judge.id)] = jpDraftEntries;
+  sd('pr_jp_drafts', jpDrafts);
+}
+
+function addJpRow() {
+  const chest = document.getElementById('jpAddChest').value.trim();
+  const code = document.getElementById('jpAddCode').value.trim().toUpperCase();
+  const mark = document.getElementById('jpAddMark').value.trim();
+  if (!chest) { showToast('Chest number required!', true); return; }
+  if (jpDraftEntries.find(e => e.chest === chest)) { showToast('Chest # already added!', true); return; }
+  const part = parts.find(p => p.chest === chest);
+  jpDraftEntries.push({ chest, code, mark, name: part ? part.name : '' });
+  jpSaveDraft();
+  renderJpTable(false);
+  document.getElementById('jpAddChest').value = '';
+  document.getElementById('jpAddCode').value = '';
+  document.getElementById('jpAddMark').value = '';
+  document.getElementById('jpAddChest').focus();
+}
+
+function deleteJpRow(chest) {
+  jpDraftEntries = jpDraftEntries.filter(e => e.chest !== chest);
+  jpSaveDraft();
+  renderJpTable(false);
+}
+
+function updateJpEntry(chest, field, val) {
+  const entry = jpDraftEntries.find(e => e.chest === chest);
+  if (entry) { entry[field] = val; jpSaveDraft(); }
+}
+
+function submitJpMarks() {
+  const prog = progs.find(p => p.id === jpActiveProg);
+  const judge = jpJudges.find(j => j.id === jpActiveJudge);
+  if (!prog || !judge) return;
+  if (jpLocks[jpActiveProg]) { showToast('Already submitted & locked!', true); return; }
+  if (!jpDraftEntries.length) { showToast('No entries to submit!', true); return; }
+
+  let saved = 0;
+  jpDraftEntries.forEach(e => {
+    if (e.mark === '' || e.mark === null) return;
+    const score = parseFloat(e.mark);
+    if (isNaN(score)) return;
+    const part = parts.find(p => p.chest === e.chest);
+    if (!part) return;
+    const team = teams.find(t => t.id == part.group);
+    if (!team) return;
+    if (!team.members) team.members = [];
+    const existIdx = team.members.findIndex(m => String(m.pid) === String(prog.id) && m.name === part.name);
+    if (existIdx >= 0) team.members[existIdx].score = score;
+    else team.members.push({ pid: prog.id, name: part.name, score });
+    saved++;
+  });
+  sd('pr_teams', teams);
+
+  jpLocks[jpActiveProg] = { judgeId: judge.id, judgeName: judge.name, entries: jpDraftEntries, submittedAt: new Date().toISOString() };
+  sd('pr_jp_locks', jpLocks);
+
+  jpHistory.unshift({ ts: new Date().toISOString(), judgeName: judge.name, progId: prog.id, progName: prog.name, action: 'submit', count: saved });
+  sd('pr_jp_history', jpHistory);
+
+  delete jpDrafts[jpDraftKey(jpActiveProg, judge.id)];
+  sd('pr_jp_drafts', jpDrafts);
+
+  showToast(`${saved} marks submitted & locked ✓`);
+  renderJpKiosk();
+}
+
 // ═══ ANALYTICS ═══
 function renderAnalytics() {
   const el = document.getElementById('analyticsContent');
@@ -5147,6 +5544,10 @@ async function clearUserData(username){
     pr_hist: JSON.stringify([]),
     pr_attendance: JSON.stringify({}),
     pr_me_judges: JSON.stringify({}),
+    pr_jp_judges: JSON.stringify([]),
+    pr_jp_locks: JSON.stringify({}),
+    pr_jp_history: JSON.stringify([]),
+    pr_jp_drafts: JSON.stringify({}),
     pr_home: JSON.stringify({title:'',tagline:'',date:'',venue:'',desc:'',org:'',contact:'',primary:'#247DE1',accent:'#1A5FB4',themeStyle:'gradient',fontPair:'modern',textMode:'light'}),
     pr_live: JSON.stringify({enabled:false, showScores:true, showCategory:true}),
     pr_poster_tpl: JSON.stringify({eventName:'Annual Arts Fest 2026', edition:'', org:'', venue:'', desc:'', accent:'#e8d84a', date:''}),
@@ -5184,6 +5585,9 @@ function clearData(type) {
     teams = teams.map(t => ({...t, members: []}));
     sd('pr_teams', teams);
     meJudgeData = {}; sd('pr_me_judges', meJudgeData);
+    jpLocks = {}; sd('pr_jp_locks', jpLocks);
+    jpHistory = []; sd('pr_jp_history', jpHistory);
+    jpDrafts = {}; sd('pr_jp_drafts', jpDrafts);
   }
   if (type === 'programs' || type === 'all') {
     progs = []; sd('pr_progs', progs);
