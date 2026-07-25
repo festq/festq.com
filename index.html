@@ -406,7 +406,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="nav-item" data-page="awards" onclick="showPage('awards')"><span class="ni">🏅</span>Awards</div>
       <div class="nav-item" data-page="analytics" onclick="showPage('analytics')"><span class="ni">📈</span>Analytics</div>
       <div class="nav-section">SETTINGS</div>
-      <div class="nav-item" data-page="help" onclick="showPage('help')"><span class="ni">❓</span>How to Use</div>
+      <div class="nav-item" data-page="help" onclick="showPage('help')"><span class="ni">❓</span>എങ്ങനെ ഉപയോഗിക്കാം</div>
       <div class="nav-item" id="navSettings" data-page="settings" onclick="showPage('settings')"><span class="ni">⚙️</span>Settings</div>
     </nav>
     <div class="sidebar-footer">
@@ -457,43 +457,6 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
             <button class="btn btn-primary" onclick="showPage('markentry')" style="white-space:nowrap">Open Mark Entry →</button>
           </div>
           <div id="dashMeStatus" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"></div>
-        </div>
-
-        <!-- HOW TO USE -->
-        <div class="card" style="margin-top:18px">
-          <div class="card-title">📖 എങ്ങനെ ഉപയോഗിക്കാം</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:4px">
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(36,125,225,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">🧑‍🤝‍🧑</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--accent);margin-bottom:5px">1. PARTICIPANTS</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">ആദ്യം Participants section-ലേക്ക് പോകുക. അവിടെ ഓരോ participant-ന്റെ പേര്, ചെസ്റ്റ് നമ്പർ, കാറ്റഗറി, ഗ്രൂപ്പ് എന്നിവ ചേർക്കുക.</div>
-            </div>
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(255,165,0,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">🎯</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--gold);margin-bottom:5px">2. COMPETITION</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Programs section-ൽ ആദ്യം "+ Category" ക്ലിക്ക് ചെയ്ത് Arts, Sports തുടങ്ങിയ categories ഉണ്ടാക്കുക. പിന്നെ "+ Program" ക്ലിക്ക് ചെയ്ത് programs ചേർക്കുക.</div>
-            </div>
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(0,229,122,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">👥</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--green);margin-bottom:5px">3. TEAMS</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Teams section-ൽ ഓരോ team-ന്റെ പേര് edit ചെയ്ത് സ്വന്തം team name കൊടുക്കാം. Members-നെ Programs → Scores വഴി add ചെയ്യാം.</div>
-            </div>
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(255,77,109,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">📝</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--red);margin-bottom:5px">4. SCORES</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Programs page-ൽ ഓരോ program-ന്റെ "📝 Scores" button ക്ലിക്ക് ചെയ്ത് participant-ന്റെ പേരും score-ഉം enter ചെയ്യുക.</div>
-            </div>
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(255,215,0,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">📊</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--gold);margin-bottom:5px">5. RESULTS</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Results page-ൽ ഓട്ടോമാറ്റിക്ക് ആയി leaderboard-ഉം category-wise points graph-ഉം കാണിക്കും.</div>
-            </div>
-            <div style="background:var(--dark3);border-radius:12px;padding:14px;border:1px solid rgba(0,180,216,.15)">
-              <div style="font-size:1.4rem;margin-bottom:6px">⚙️</div>
-              <div style="font-family:'Montserrat','Manjari',sans-serif;font-size:.9rem;letter-spacing:1px;color:#00B4D8;margin-bottom:5px">6. SETTINGS</div>
-              <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Admin മാത്രം Settings access ചെയ്യാം. അവിടെ password change ചെയ്യാനും additional users manage ചെയ്യാനും സാധിക്കും.</div>
-            </div>
-          </div>
         </div>
 
         <!-- FEEDBACK -->
@@ -1171,52 +1134,52 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 
       <!-- ── HOW TO USE / HELP ── -->
       <div class="page" id="page-help">
-        <div class="prog-header"><h2>❓ HOW TO USE</h2></div>
+        <div class="prog-header"><h2>❓ എങ്ങനെ ഉപയോഗിക്കാം</h2></div>
 
         <div class="card" style="margin-bottom:14px">
-          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🚀 Quick Start</div>
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🚀 തുടങ്ങാൻ</div>
           <ol style="margin:0;padding-left:20px;font-size:.85rem;line-height:2;color:var(--text)">
-            <li><b>Competition</b> — Add your categories and programs first.</li>
-            <li><b>Registration / Participants</b> — Register participants and assign chest numbers.</li>
-            <li><b>Teams</b> — Set up teams/houses/units that participants belong to.</li>
-            <li><b>Mark Entry / Judge Panel</b> — Enter marks for each program (see below for the full Judge Panel workflow).</li>
-            <li><b>Results / Live Results</b> — View computed results and share the live leaderboard.</li>
-            <li><b>Publish</b> — Push your Home Page, Announcements and Leaderboard live for the public.</li>
+            <li><b>Competition</b> — ആദ്യം categories, programs എന്നിവ ചേർക്കുക.</li>
+            <li><b>Registration / Participants</b> — Participants-നെ register ചെയ്ത് chest number കൊടുക്കുക.</li>
+            <li><b>Teams</b> — Participants ഉൾപ്പെടുന്ന teams/houses/units ഉണ്ടാക്കുക.</li>
+            <li><b>Mark Entry / Judge Panel</b> — ഓരോ program-നും marks enter ചെയ്യുക (താഴെ Judge Panel-ന്റെ പൂർണ്ണ വിവരണം കാണുക).</li>
+            <li><b>Results / Live Results</b> — Results-ഉം live leaderboard-ഉം കാണുകയും share ചെയ്യുകയും ചെയ്യാം.</li>
+            <li><b>Publish</b> — Home Page, Announcements, Leaderboard എന്നിവ പബ്ലിക്കായി publish ചെയ്യുക.</li>
           </ol>
         </div>
 
         <div class="card" style="margin-bottom:14px">
-          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🧑‍⚖️ Judge Panel — Full Guide</div>
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🧑‍⚖️ Judge Panel — പൂർണ്ണ വിവരണം</div>
           <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
-            <b>Step 1 — Admin: Add judges</b><br>
-            Go to <b>Judge Panel</b> in the sidebar → type the judge's name → tick the programs they should judge → <b>+ Add Judge</b>. A judge can be assigned any number of programs. You can edit a judge's assigned programs anytime from the "✏️ Edit assigned programs" section under their name.
+            <b>Step 1 — Admin: Judges-നെ ചേർക്കുക</b><br>
+            Sidebar-ലെ <b>Judge Panel</b>-ലേക്ക് പോകുക → judge-ന്റെ പേര് ടൈപ്പ് ചെയ്യുക → അവർ judge ചെയ്യേണ്ട programs ടിക്ക് ചെയ്യുക → <b>+ Add Judge</b>. ഒരു judge-ന് എത്ര programs വേണമെങ്കിലും assign ചെയ്യാം. പേരിന്റെ താഴെയുള്ള "✏️ Edit assigned programs"-ൽ നിന്ന് എപ്പോൾ വേണമെങ്കിലും programs മാറ്റാം.
           </div>
           <div style="height:10px"></div>
           <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
-            <b>Step 2 — Judge: Log in and enter marks</b><br>
-            On the same device, from the main <b>Login</b> screen, the judge taps <b>Judge Login</b> and simply types their name — no password needed. They'll see only the programs assigned to them, tap a program, add chest number + code letter + mark for each participant, then hit <b>Submit Marks</b>.
+            <b>Step 2 — Judge: Login ചെയ്ത് marks enter ചെയ്യുക</b><br>
+            അതേ device-ൽ, main <b>Login</b> സ്ക്രീനിൽ നിന്ന് judge <b>Judge Login</b> ടാപ്പ് ചെയ്ത് അവരുടെ പേര് മാത്രം ടൈപ്പ് ചെയ്താൽ മതി — password വേണ്ട. അവർക്ക് assign ചെയ്ത programs മാത്രമേ കാണൂ. ഒരു program തിരഞ്ഞെടുത്ത്, ഓരോ participant-ന്റെയും chest number, code letter, mark എന്നിവ ചേർത്ത് <b>Submit Marks</b> ചെയ്യുക.
           </div>
           <div style="height:10px"></div>
           <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
-            <b>Step 3 — Locking & corrections</b><br>
-            Once a judge submits, that program is <b>locked</b> automatically — it can't be resubmitted or edited by the judge again, which prevents duplicate/accidental entries. If a genuine correction is needed, the admin can go to <b>Judge Panel</b> and tap <b>🔓 Unlock</b> next to that program, then the judge can enter and submit again.
+            <b>Step 3 — Lock ചെയ്യലും corrections-ഉം</b><br>
+            Judge submit ചെയ്താൽ ആ program ഓട്ടോമാറ്റിക്കായി <b>lock</b> ആകും — വീണ്ടും submit ചെയ്യാനോ edit ചെയ്യാനോ judge-ന് സാധിക്കില്ല, ഇത് duplicate/തെറ്റായ entries ഒഴിവാക്കും. ശരിക്കും ഒരു correction വേണമെങ്കിൽ, admin Judge Panel-ൽ പോയി ആ program-ന് നേരെയുള്ള <b>🔓 Unlock</b> ക്ലിക്ക് ചെയ്യുക, എന്നിട്ട് judge-ന് വീണ്ടും enter ചെയ്ത് submit ചെയ്യാം.
           </div>
           <div style="height:10px"></div>
           <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
             <b>Step 4 — Submission History</b><br>
-            Every submit and unlock is logged at the bottom of the Judge Panel page — with judge name, program, time, and number of marks — so you always have a record of who entered what and when.
+            ഓരോ submit-ഉം unlock-ഉം Judge Panel page-ന്റെ താഴെ log ചെയ്യപ്പെടും — judge-ന്റെ പേര്, program, സമയം, marks എണ്ണം എന്നിവയോടെ. ആരാണ് എപ്പോൾ എന്ത് enter ചെയ്തതെന്ന് എപ്പോഴും കാണാം.
           </div>
           <div style="margin-top:12px;padding:10px 14px;background:rgba(36,125,225,.08);border:1px solid rgba(36,125,225,.2);border-radius:8px;font-size:.76rem;color:var(--muted)">
-            📌 Note: Judge Login works on the device the admin most recently logged in on (its event data is already saved on that device). Make sure the admin logs in on the judging tablet/laptop at least once before handing it over.
+            📌 ശ്രദ്ധിക്കുക: Judge Login പ്രവർത്തിക്കുന്നത് admin അവസാനം login ചെയ്ത device-ൽ ആണ് (ആ device-ൽ event data നേരത്തെ save ചെയ്തിട്ടുണ്ട്). Judging-ന് ഉപയോഗിക്കുന്ന tablet/laptop-ൽ admin ഒരു തവണയെങ്കിലും login ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക.
           </div>
         </div>
 
         <div class="card">
           <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">💡 Tips</div>
           <ul style="margin:0;padding-left:20px;font-size:.83rem;line-height:1.9;color:var(--text)">
-            <li>Use <b>QR Cards</b> and <b>Attendance</b> to manage check-ins at the venue.</li>
-            <li>Use <b>Templates</b> to design and print posters/certificates.</li>
-            <li>Use <b>Settings</b> to reset scores, programs, or all data before a new event.</li>
+            <li>Venue-ൽ check-in manage ചെയ്യാൻ <b>QR Cards</b>, <b>Attendance</b> ഉപയോഗിക്കുക.</li>
+            <li>Posters/certificates design ചെയ്യാനും print ചെയ്യാനും <b>Templates</b> ഉപയോഗിക്കുക.</li>
+            <li>പുതിയ event തുടങ്ങുന്നതിന് മുൻപ് scores/programs/എല്ലാ data-യും reset ചെയ്യാൻ <b>Settings</b> ഉപയോഗിക്കുക.</li>
           </ul>
         </div>
       </div>
@@ -1932,7 +1895,7 @@ function showPage(pg){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pel=document.getElementById('page-'+pg);
   if(pel) pel.classList.add('active');
-  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',judgepanel:'JUDGE PANEL',analytics:'ANALYTICS',history:'HISTORY',help:'HOW TO USE',settings:'SETTINGS'};
+  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',judgepanel:'JUDGE PANEL',analytics:'ANALYTICS',history:'HISTORY',help:'എങ്ങനെ ഉപയോഗിക്കാം',settings:'SETTINGS'};
   document.getElementById('topbarTitle').textContent=T[pg]||pg.toUpperCase();
   document.querySelector(`.nav-item[data-page="${pg}"]`)?.classList.add('active');
   closeSidebar();
