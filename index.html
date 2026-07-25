@@ -406,6 +406,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="nav-item" data-page="awards" onclick="showPage('awards')"><span class="ni">🏅</span>Awards</div>
       <div class="nav-item" data-page="analytics" onclick="showPage('analytics')"><span class="ni">📈</span>Analytics</div>
       <div class="nav-section">SETTINGS</div>
+      <div class="nav-item" data-page="help" onclick="showPage('help')"><span class="ni">❓</span>How to Use</div>
       <div class="nav-item" id="navSettings" data-page="settings" onclick="showPage('settings')"><span class="ni">⚙️</span>Settings</div>
     </nav>
     <div class="sidebar-footer">
@@ -1168,6 +1169,58 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
         <div class="card"><div id="histContent"></div></div>
       </div>
 
+      <!-- ── HOW TO USE / HELP ── -->
+      <div class="page" id="page-help">
+        <div class="prog-header"><h2>❓ HOW TO USE</h2></div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🚀 Quick Start</div>
+          <ol style="margin:0;padding-left:20px;font-size:.85rem;line-height:2;color:var(--text)">
+            <li><b>Competition</b> — Add your categories and programs first.</li>
+            <li><b>Registration / Participants</b> — Register participants and assign chest numbers.</li>
+            <li><b>Teams</b> — Set up teams/houses/units that participants belong to.</li>
+            <li><b>Mark Entry / Judge Panel</b> — Enter marks for each program (see below for the full Judge Panel workflow).</li>
+            <li><b>Results / Live Results</b> — View computed results and share the live leaderboard.</li>
+            <li><b>Publish</b> — Push your Home Page, Announcements and Leaderboard live for the public.</li>
+          </ol>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">🧑‍⚖️ Judge Panel — Full Guide</div>
+          <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
+            <b>Step 1 — Admin: Add judges</b><br>
+            Go to <b>Judge Panel</b> in the sidebar → type the judge's name → tick the programs they should judge → <b>+ Add Judge</b>. A judge can be assigned any number of programs. You can edit a judge's assigned programs anytime from the "✏️ Edit assigned programs" section under their name.
+          </div>
+          <div style="height:10px"></div>
+          <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
+            <b>Step 2 — Judge: Log in and enter marks</b><br>
+            On the same device, from the main <b>Login</b> screen, the judge taps <b>Judge Login</b> and simply types their name — no password needed. They'll see only the programs assigned to them, tap a program, add chest number + code letter + mark for each participant, then hit <b>Submit Marks</b>.
+          </div>
+          <div style="height:10px"></div>
+          <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
+            <b>Step 3 — Locking & corrections</b><br>
+            Once a judge submits, that program is <b>locked</b> automatically — it can't be resubmitted or edited by the judge again, which prevents duplicate/accidental entries. If a genuine correction is needed, the admin can go to <b>Judge Panel</b> and tap <b>🔓 Unlock</b> next to that program, then the judge can enter and submit again.
+          </div>
+          <div style="height:10px"></div>
+          <div style="font-size:.83rem;line-height:1.9;color:var(--text)">
+            <b>Step 4 — Submission History</b><br>
+            Every submit and unlock is logged at the bottom of the Judge Panel page — with judge name, program, time, and number of marks — so you always have a record of who entered what and when.
+          </div>
+          <div style="margin-top:12px;padding:10px 14px;background:rgba(36,125,225,.08);border:1px solid rgba(36,125,225,.2);border-radius:8px;font-size:.76rem;color:var(--muted)">
+            📌 Note: Judge Login works on the device the admin most recently logged in on (its event data is already saved on that device). Make sure the admin logs in on the judging tablet/laptop at least once before handing it over.
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;color:var(--accent)">💡 Tips</div>
+          <ul style="margin:0;padding-left:20px;font-size:.83rem;line-height:1.9;color:var(--text)">
+            <li>Use <b>QR Cards</b> and <b>Attendance</b> to manage check-ins at the venue.</li>
+            <li>Use <b>Templates</b> to design and print posters/certificates.</li>
+            <li>Use <b>Settings</b> to reset scores, programs, or all data before a new event.</li>
+          </ul>
+        </div>
+      </div>
+
       <!-- ── SETTINGS ── -->
       <div class="page" id="page-settings">
         <div class="prog-header"><h2>⚙️ SETTINGS</h2></div>
@@ -1879,7 +1932,7 @@ function showPage(pg){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pel=document.getElementById('page-'+pg);
   if(pel) pel.classList.add('active');
-  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',judgepanel:'JUDGE PANEL',analytics:'ANALYTICS',history:'HISTORY',settings:'SETTINGS'};
+  const T={dashboard:'DASHBOARD',programs:'COMPETITION',registration:'REGISTRATION',participants:'PARTICIPANTS',teams:'TEAMS',results:'RESULTS',liveresults:'LIVE RESULTS',home:'HOME PAGE',announcements:'ANNOUNCEMENTS',leaderboard:'LEADERBOARD',gallery:'GALLERY',publish:'PUBLISH',templates:'TEMPLATES',qrcards:'QR CARDS',attendance:'ATTENDANCE',awards:'AWARDS',markentry:'MARK ENTRY',judgepanel:'JUDGE PANEL',analytics:'ANALYTICS',history:'HISTORY',help:'HOW TO USE',settings:'SETTINGS'};
   document.getElementById('topbarTitle').textContent=T[pg]||pg.toUpperCase();
   document.querySelector(`.nav-item[data-page="${pg}"]`)?.classList.add('active');
   closeSidebar();
