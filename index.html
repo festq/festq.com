@@ -333,7 +333,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
         <span onclick="toggleSignup(true)" style="color:var(--accent);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">Sign Up</span>
       </div>
       <div style="text-align:center;margin-top:8px">
-        <span onclick="toggleJudgeLogin(true)" style="color:var(--accent);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">🧑‍⚖️ Judge Login</span>
+        <span onclick="toggleJudgeLogin(true)" style="color:var(--accent);font-size:.78rem;font-family:'Inter','Manjari',sans-serif;cursor:pointer;text-decoration:underline">Judge Login</span>
       </div>
     </div>
     <!-- JUDGE LOGIN FORM -->
@@ -399,7 +399,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="nav-item" data-page="publish" onclick="showPage('publish')" style="color:var(--green);border-left-color:rgba(0,229,122,.0)"><span class="ni">🚀</span>Publish</div>
       <div class="nav-section">TOOLS</div>
       <div class="nav-item" data-page="markentry" onclick="showPage('markentry')" style="color:var(--accent);font-weight:600"><span class="ni">📝</span>Mark Entry</div>
-      <div class="nav-item" data-page="judgepanel" onclick="showPage('judgepanel')"><span class="ni">🧑‍⚖️</span>Judge Panel</div>
+      <div class="nav-item" data-page="judgepanel" onclick="showPage('judgepanel')">Judge Panel</div>
       <div class="nav-item" data-page="templates" onclick="showPage('templates')"><span class="ni">🎨</span>Templates</div>
       <div class="nav-item" data-page="qrcards" onclick="showPage('qrcards')"><span class="ni">📱</span>QR Cards</div>
       <div class="nav-item" data-page="attendance" onclick="showPage('attendance')"><span class="ni">✅</span>Attendance</div>
@@ -1123,8 +1123,8 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <!-- ── JUDGE PANEL ── -->
       <div class="page" id="page-judgepanel">
         <div class="prog-header">
-          <h2>🧑‍⚖️ JUDGE PANEL</h2>
-          <div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Add judges below — they log in with just their name from the main Login screen (🧑‍⚖️ Judge Login)</div>
+          <h2>JUDGE PANEL</h2>
+          <div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Add judges below — they log in with just their name from the main Login screen (Judge Login)</div>
         </div>
 
         <div id="jpManageTab">
@@ -1133,7 +1133,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
               <div class="form-field" style="margin:0;flex:1;min-width:160px">
                 <label>JUDGE NAME</label>
-                <input class="form-input" id="jpNewName" placeholder="e.g. Anitha Teacher" style="padding:8px 12px" onkeydown="if(event.key==='Enter')addJpJudge()">
+                <input class="form-input" id="jpNewName" placeholder="Judge name" style="padding:8px 12px" onkeydown="if(event.key==='Enter')addJpJudge()">
               </div>
               <button class="btn btn-primary btn-sm" style="height:38px" onclick="addJpJudge()">+ Add Judge</button>
             </div>
@@ -1235,7 +1235,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 <div id="judgeShell">
   <div style="max-width:760px;margin:0 auto;padding:22px 16px 60px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-      <div style="font-size:1rem;font-weight:800;letter-spacing:.5px">🧑‍⚖️ JUDGE PANEL</div>
+      <div style="font-size:1rem;font-weight:800;letter-spacing:.5px">JUDGE PANEL</div>
     </div>
     <div id="judgeShellArea"></div>
   </div>
@@ -5121,7 +5121,7 @@ function renderJpManage() {
   const listEl = document.getElementById('jpJudgeList');
   if (listEl) {
     if (!jpJudges.length) {
-      listEl.innerHTML = `<div class="empty-state"><div class="ei">🧑‍⚖️</div>No judges added yet</div>`;
+      listEl.innerHTML = `<div class="empty-state">No judges added yet</div>`;
     } else {
       listEl.innerHTML = jpJudges.map(j => {
         const assigned = progs.filter(p => j.progIds.includes(p.id));
@@ -5238,13 +5238,12 @@ function renderJpKiosk() {
 
 function renderJpJudgeSelect(el) {
   if (!jpJudges.length) {
-    el.innerHTML = `<div class="empty-state"><div class="ei">🧑‍⚖️</div>No judges set up yet — ask admin to add judges under "Manage Judges"</div>`;
+    el.innerHTML = `<div class="empty-state">No judges set up yet — ask admin to add judges under "Manage Judges"</div>`;
     return;
   }
   el.innerHTML = `<div style="font-size:.85rem;color:var(--muted);margin-bottom:14px">👋 Select your name to continue</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px">
       ${jpJudges.map(j => `<div onclick="selectJpJudge('${j.id}')" style="cursor:pointer;background:var(--dark3);border:1px solid rgba(36,125,225,.15);border-radius:12px;padding:20px 14px;text-align:center">
-        <div style="font-size:1.6rem;margin-bottom:6px">🧑‍⚖️</div>
         <div style="font-weight:700;font-size:.9rem">${esc(j.name)}</div>
         <div style="font-size:.7rem;color:var(--muted);margin-top:3px">${j.progIds.length} program${j.progIds.length===1?'':'s'}</div>
       </div>`).join('')}
@@ -5267,7 +5266,7 @@ function renderJpProgList(el, judge) {
   const assigned = progs.filter(p => judge.progIds.includes(p.id));
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div style="font-size:.95rem;font-weight:700">🧑‍⚖️ ${esc(judge.name)}</div>
+      <div style="font-size:.95rem;font-weight:700">${esc(judge.name)}</div>
       <button class="btn btn-outline btn-sm" onclick="${jpStandalone?'exitJudgeMode()':'jpBackToJudges()'}">${jpStandalone?'🚪 Exit':'← Switch Judge'}</button>
     </div>
     ${assigned.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
@@ -5312,7 +5311,7 @@ function renderJpEntryScreen(el, judge) {
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <div>
         <div style="font-size:.95rem;font-weight:700">${esc(prog?prog.name:'')}</div>
-        <div style="font-size:.72rem;color:var(--muted)">🧑‍⚖️ ${esc(judge.name)}</div>
+        <div style="font-size:.72rem;color:var(--muted)">${esc(judge.name)}</div>
       </div>
       <button class="btn btn-outline btn-sm" onclick="jpBackToProgList()">← Back</button>
     </div>
