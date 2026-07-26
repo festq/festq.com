@@ -898,10 +898,6 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
               <input type="checkbox" id="pubScores" style="accent-color:var(--accent);width:16px;height:16px">
               <div><div style="font-size:.85rem;font-weight:600">🔢 Show Scores</div><div style="font-size:.7rem;color:var(--muted)">Individual points</div></div>
             </label>
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)">
-              <input type="checkbox" id="pubPosters" style="accent-color:var(--accent);width:16px;height:16px">
-              <div><div style="font-size:.85rem;font-weight:600">🎓 Student Posters</div><div style="font-size:.7rem;color:var(--muted)">Individual student winner posters per program (downloadable)</div></div>
-            </label>
           </div>
         </div>
 
@@ -3708,7 +3704,6 @@ function generatePublicHTML() {
   const incLeader  = document.getElementById('pubLeader')?.checked;
   const incGallery = document.getElementById('pubGallery')?.checked;
   const incScores  = document.getElementById('pubScores')?.checked;
-  const incPosters = document.getElementById('pubPosters')?.checked;
   const incProgResults = document.getElementById('pubProgResults')?.checked;
   const incSearch = document.getElementById('pubSearch')?.checked;
   const incCatLeaders = document.getElementById('pubCatLeaders')?.checked;
@@ -3771,7 +3766,7 @@ function generatePublicHTML() {
   const standingsDataScript = `<script>window.__prStandings = ${JSON.stringify(standings.map(t=>({id:String(t.id),name:t.name,total:t.total,color:t.color})))};<\/script>`;
 
   // ── Build sections ──
-  let homeSec = '', annSec = '', liveSec = '', leaderSec = '', gallerySec = '', postersSec = '';
+  let homeSec = '', annSec = '', liveSec = '', leaderSec = '', gallerySec = '';
   const navLinks = [];
 
   // ── Shared search lookup (used inline in hero when Home is on, else as its own section) ──
@@ -3972,6 +3967,15 @@ function generatePublicHTML() {
     </section>`;
   }
 
+  const tplOpts = getTplOpts();
+  const posterProgs = progs.map(p => {
+    const winners = getTop3ForProgram(p.id);
+    const cat = cats.find(c => c.id === p.catId);
+    return {p, winners, cat};
+  }).filter(x => x.winners.length > 0);
+  const posterIdxByPid = {};
+  posterProgs.forEach((x, idx) => { posterIdxByPid[x.p.id] = idx; });
+
   let progResultsSec = '';
   if (incProgResults && progs.length) {
     navLinks.push(`<a href="#program-results" class="nav-link">Program Results</a>`);
@@ -3992,8 +3996,13 @@ function generatePublicHTML() {
         });
         entries.sort((a,b) => b.score - a.score);
         if (!entries.length) return null;
+        const posterIdx = posterIdxByPid[prog.id];
+        const posterBtn = posterIdx !== undefined ? `<button class="view-poster-btn" onclick='openProgramPoster(${posterIdx}, ${JSON.stringify(prog.name)})'>🎓 Poster</button>` : '';
         return { catId: String(prog.catId || ''), html: `<div class="cat-block" data-cat="${esc(String(prog.catId || ''))}">
-          <div class="cat-title">${esc(prog.name)}${cat ? ' <span style="color:#666;font-weight:400">· '+esc(cat.name)+'</span>' : ''}</div>
+          <div class="cat-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <span>${esc(prog.name)}${cat ? ' <span style="color:#666;font-weight:400">· '+esc(cat.name)+'</span>' : ''}</span>
+            ${posterBtn}
+          </div>
           <div class="lb-wrap">
             ${entries.map((e,i) => `<div class="lb-row${i<3?' lb-top'+(i+1):''}">
               <span class="lb-rank${i<3?' lb-rank-top':''}">${i+1}</span>
@@ -4013,6 +4022,9 @@ function generatePublicHTML() {
           return `<button class="pr-chip" data-chip-cat="${esc(String(c.id))}" onclick="filterProgResults('${esc(String(c.id))}',this)">${esc(c.name)} <span class="pr-chip-count">${n}</span></button>`;
         }).join('')}
       </div>` : '';
+    const posterResTemplatesHtml = posterProgs.length ? `<div style="position:absolute;left:-99999px;top:0">
+      ${posterProgs.map((x, idx) => `<div id="poster-res-${idx}" style="width:1051px;height:1280px">${buildStudentPosterHTMLFor(x.p, x.winners, x.cat, tplOpts, idx+1)}</div>`).join('')}
+    </div>` : '';
     progResultsSec = `<section id="program-results" class="section">
       <h2 class="sec-title">🧑‍🤝‍🧑 Program-wise Results <span style="color:${accent2};font-size:.7rem;font-weight:400;letter-spacing:1px">· ${publishedCount} Published</span></h2>
       ${chipsHtml}
@@ -4020,6 +4032,7 @@ function generatePublicHTML() {
         ${progBlocks.length ? progBlocks.map(b => b.html).join('') : `<div class="empty-msg">No results published yet.</div>`}
       </div>
       <div id="progResultsEmpty" class="empty-msg" style="display:none">No results published in this category yet.</div>
+      ${posterResTemplatesHtml}
     </section>`;
   }
 
@@ -4044,33 +4057,6 @@ function generatePublicHTML() {
         </div>`).join('')}
       </div>
     </section>`;
-  }
-
-  if (incPosters) {
-    // Use the Student Poster design (per-program individual student winners) for the Publish page
-    const tplOpts = getTplOpts();
-    const posterProgs = progs.map(p => {
-      const winners = getTop3ForProgram(p.id);
-      const cat = cats.find(c => c.id === p.catId);
-      return {p, winners, cat};
-    }).filter(x => x.winners.length > 0);
-
-    if (posterProgs.length) {
-      navLinks.push(`<a href="#posters" class="nav-link">Posters</a>`);
-      postersSec = `<section id="posters" class="section">
-        <h2 class="sec-title">🎓 Student Posters <span style="color:${accent2};font-size:.7rem;font-weight:400;letter-spacing:1px">· ${posterProgs.length} Program${posterProgs.length!==1?'s':''}</span></h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:16px">
-          ${posterProgs.map((x, idx) => `<div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden">
-              <div style="width:100%;height:0;padding-bottom:121.8%;position:relative;overflow:hidden">
-                <div id="poster-pub-${idx}" style="position:absolute;top:0;left:0;width:1051px;height:1280px;transform:scale(.2807);transform-origin:top left">${buildStudentPosterHTMLFor(x.p, x.winners, x.cat, tplOpts, idx+1)}</div>
-              </div>
-              <div style="padding:10px 12px;display:flex;gap:8px;border-top:1px solid rgba(255,255,255,.06)">
-                <button data-idx="${idx}" data-name="${esc(x.p.name)}" class="poster-dl-btn" style="flex:1;padding:6px;font-size:.74rem;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--text);border-radius:6px;cursor:pointer;font-weight:500">📷 Download JPG</button>
-              </div>
-            </div>`).join('')}
-        </div>
-      </section>`;
-    }
   }
 
   const pageTitle = d.title || 'ProResult — Event';
@@ -4207,6 +4193,15 @@ function generatePublicHTML() {
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .gallery-dl-btn { position: absolute; bottom: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(10,10,15,.65); color: #fff; font-size: .9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: background .15s; }
     .gallery-dl-btn:hover { background: rgba(10,10,15,.9); }
+    .view-poster-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: var(--text); font-size: .68rem; font-weight: 600; padding: 5px 11px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-family: 'Inter','Manjari',sans-serif; transition: all .15s; }
+    .view-poster-btn:hover { border-color: ${primary}; color: ${primary}; }
+    .poster-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.82); z-index: 3000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+    .poster-modal-overlay.open { display: flex; }
+    .poster-modal-box { background: var(--dark2); border: 1px solid var(--border); border-radius: 18px; padding: 18px; width: 100%; max-width: 400px; max-height: 92vh; overflow-y: auto; position: relative; text-align: center; }
+    .poster-modal-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(255,255,255,.08); color: var(--text); font-size: 1rem; cursor: pointer; z-index: 1; }
+    .poster-modal-img { width: 100%; border-radius: 12px; display: block; margin-bottom: 14px; }
+    .poster-modal-loading { padding: 70px 10px; color: var(--muted); font-size: .82rem; }
+    .poster-modal-dl-btn { display: none; background: linear-gradient(135deg, ${primary}, ${accent2}); color: #fff; border: none; padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: .82rem; cursor: pointer; font-family: 'Inter','Manjari',sans-serif; }
 
     /* NOTIFICATION BANNER */
     .notif-banner { background: linear-gradient(90deg, rgba(255,215,0,.12), rgba(255,215,0,.04)); border-bottom: 1px solid rgba(255,215,0,.2); padding: 8px 16px; display: flex; align-items: center; gap: 10px; overflow: hidden; }
@@ -4404,8 +4399,14 @@ function generatePublicHTML() {
   ${leaderSec}
   ${latestSec}
   ${progResultsSec}
-  ${postersSec}
   ${gallerySec}
+  ${posterProgs.length && incProgResults ? `<div id="posterModal" class="poster-modal-overlay">
+    <div class="poster-modal-box">
+      <button class="poster-modal-close" onclick="closePosterModal()">✕</button>
+      <div id="posterModalContent"><div class="poster-modal-loading">Loading poster…</div></div>
+      <button class="poster-modal-dl-btn" id="posterModalDlBtn">📷 Download JPG</button>
+    </div>
+  </div>` : ''}
 
   <section class="section">
     <h2 class="sec-title">🔗 Quick Links</h2>
@@ -4476,36 +4477,44 @@ function generatePublicHTML() {
       img.src = data.src;
     }
 
-    async function downloadPosterPubJPG(idx, name) {
+    async function openProgramPoster(idx, name) {
+      const modal = document.getElementById('posterModal');
+      const content = document.getElementById('posterModalContent');
+      const dlBtn = document.getElementById('posterModalDlBtn');
+      if (!modal || !content) return;
+      modal.classList.add('open');
+      content.innerHTML = '<div class="poster-modal-loading">Loading poster…</div>';
+      dlBtn.style.display = 'none';
       if (!window.html2canvas) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.onload = () => downloadPosterPubJPG(idx, name);
-        document.head.appendChild(script);
-        return;
+        await new Promise((res) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          s.onload = res;
+          document.head.appendChild(s);
+        });
       }
-      const el = document.getElementById('poster-pub-' + idx);
-      if (!el) return;
+      const el = document.getElementById('poster-res-' + idx);
+      if (!el) { content.innerHTML = '<div class="poster-modal-loading">Poster not found</div>'; return; }
       try {
-        const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null });
-        canvas.toBlob(function (blob) {
-          if (!blob) return;
+        const canvas = await html2canvas(el, { scale: 1.4, useCORS: true, backgroundColor: null });
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        content.innerHTML = '<img src="' + dataUrl + '" alt="' + (name || 'Poster').replace(/"/g,'') + '" class="poster-modal-img">';
+        dlBtn.style.display = 'inline-block';
+        dlBtn.onclick = function () {
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
+          a.href = dataUrl;
           a.download = (name || 'poster').replace(/[^a-z0-9\-_]/gi, '_') + '.jpg';
           a.click();
-        }, 'image/jpeg', 0.92);
-      } catch(e) { console.error('Poster download failed:', e); }
-    }
-
-    // Setup poster button listeners
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('poster-dl-btn')) {
-        const idx = e.target.getAttribute('data-idx');
-        const name = e.target.getAttribute('data-name');
-        downloadPosterPubJPG(idx, name);
+        };
+      } catch (e) {
+        content.innerHTML = '<div class="poster-modal-loading">Could not load poster</div>';
       }
-    });
+    }
+    function closePosterModal() {
+      const modal = document.getElementById('posterModal');
+      if (modal) modal.classList.remove('open');
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePosterModal(); });
   <\/script>
 </body>
 </html>`;
