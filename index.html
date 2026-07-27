@@ -908,6 +908,12 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
           <div style="font-size:.7rem;color:var(--muted);margin-top:6px">Save ചെയ്‌ത URL Dashboard-ൽ കാണിക്കും</div>
         </div>
 
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-title">🔴 YOUTUBE LIVE STREAM LINK (optional)</div>
+          <input class="form-input" id="pubYoutubeLive" placeholder="e.g. https://youtube.com/watch?v=..." style="margin-bottom:0">
+          <div style="font-size:.7rem;color:var(--muted);margin-top:6px">ഇത് കൊടുത്താൽ public site-ൽ ഒരു "🔴 Watch Live" button കാണിക്കും — ക്ലിക്ക് ചെയ്താൽ YouTube-ലേക്ക് പോകും</div>
+        </div>
+
         <!-- Generate button -->
         <button class="btn btn-primary" style="width:100%;padding:14px;font-size:1rem;background:linear-gradient(135deg,var(--green),#00B860);letter-spacing:2px" onclick="generatePublicHTML()">
           🚀 GENERATE &amp; DOWNLOAD index.html
@@ -3695,6 +3701,9 @@ function renderPublishPage() {
   const url = localStorage.getItem('pr_github_url') || '';
   const el = document.getElementById('pubGithubUrl');
   if (el) el.value = url;
+  const yt = localStorage.getItem('pr_youtube_live') || '';
+  const ytEl = document.getElementById('pubYoutubeLive');
+  if (ytEl) ytEl.value = yt;
 }
 
 function generatePublicHTML() {
@@ -3710,6 +3719,9 @@ function generatePublicHTML() {
   const incLatest = document.getElementById('pubLatestResults')?.checked;
   const githubUrl  = document.getElementById('pubGithubUrl')?.value.trim();
   if (githubUrl) localStorage.setItem('pr_github_url', githubUrl);
+  const youtubeLive = document.getElementById('pubYoutubeLive')?.value.trim();
+  if (youtubeLive) localStorage.setItem('pr_youtube_live', youtubeLive);
+  else localStorage.removeItem('pr_youtube_live');
 
   const d = homeData;
   const primary = d.primary || '#247DE1';
@@ -3768,6 +3780,7 @@ function generatePublicHTML() {
   // ── Build sections ──
   let homeSec = '', annSec = '', liveSec = '', leaderSec = '', gallerySec = '';
   const navLinks = [];
+  if (youtubeLive) navLinks.push(`<a href="${esc(youtubeLive)}" class="nav-link live-nav-link" target="_blank" rel="noopener">🔴 Watch Live</a>`);
 
   // ── Shared search lookup (used inline in hero when Home is on, else as its own section) ──
   let searchInnerHTML = '', searchDataScript = '';
@@ -3809,13 +3822,14 @@ function generatePublicHTML() {
 
   // ── Quick action pills shown in the hero (Home page) ──
   const heroActions = [];
+  if (youtubeLive) heroActions.push({ href: youtubeLive, icon: '🔴', label: 'Watch Live', external: true, live: true });
   if (incLive) heroActions.push({ href: '#results', icon: '📡', label: 'Standings' });
   if (incProgResults && progs.length) heroActions.push({ href: '#program-results', icon: '🏆', label: 'Results' });
   if (incLeader && cats.length) heroActions.push({ href: '#leaderboard', icon: '📊', label: 'Leaderboard' });
   if (incGallery && gallery.length) heroActions.push({ href: '#gallery', icon: '🖼', label: 'Gallery' });
   if (incAnn && anns.length) heroActions.push({ href: '#announcements', icon: '📢', label: 'Announcements' });
   const heroActionsHTML = heroActions.length ? `<div class="hero-actions">
-      ${heroActions.slice(0,4).map(a => `<a href="${a.href}" class="hero-action-btn">${a.icon} ${a.label}</a>`).join('')}
+      ${heroActions.slice(0,5).map(a => `<a href="${esc(a.href)}" class="hero-action-btn${a.live?' live-action-btn':''}"${a.external?' target="_blank" rel="noopener"':''}>${a.icon} ${a.label}</a>`).join('')}
     </div>` : '';
 
   if (incHome) {
@@ -4104,6 +4118,10 @@ function generatePublicHTML() {
     .hero-actions { display: grid; grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 10px; max-width: 340px; margin: 22px auto 0; }
     .hero-action-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 10px; border-radius: 30px; background: rgba(255,255,255,.16); backdrop-filter: blur(6px); color: #fff; text-decoration: none; font-size: .8rem; font-weight: 600; font-family: 'Inter', 'Manjari', sans-serif; border: 1px solid rgba(255,255,255,.25); transition: background .15s, transform .15s; }
     .hero-action-btn:hover { background: rgba(255,255,255,.28); transform: translateY(-1px); }
+    .live-action-btn { background: linear-gradient(135deg,#ff3b5c,#e0264a) !important; border-color: transparent !important; animation: liveGlow 1.8s ease-in-out infinite; }
+    .live-action-btn:hover { background: linear-gradient(135deg,#ff3b5c,#e0264a) !important; }
+    .live-nav-link { background: linear-gradient(135deg,#ff3b5c,#e0264a) !important; color: #fff !important; border-color: transparent !important; }
+    @keyframes liveGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(224,38,74,.55); } 50% { box-shadow: 0 0 0 8px rgba(224,38,74,0); } }
 
     /* HERO SEARCH */
     .hero-search { max-width: 420px; margin: 20px auto 0; }
@@ -4411,6 +4429,7 @@ function generatePublicHTML() {
   <section class="section">
     <h2 class="sec-title">🔗 Quick Links</h2>
     <div class="quicklinks">
+      ${youtubeLive?`<a href="${esc(youtubeLive)}" class="ql-link" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#ff3b5c,#e0264a);color:#fff;border-color:transparent">🔴 Watch Live</a>`:''}
       ${incLive?`<a href="#results" class="ql-link">Standings</a>`:''}
       ${incCatLeaders&&cats.length?`<a href="#cat-leaders" class="ql-link">Category Leaders</a>`:''}
       ${incLeader&&cats.length?`<a href="#leaderboard" class="ql-link">Leaderboard</a>`:''}
