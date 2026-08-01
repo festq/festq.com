@@ -1196,7 +1196,7 @@ function renderFullReport(){
   let totalParticipantsAll=0;
   const progCards=progList.map(p=>{
   const cat=cats.find(c=>c.id===p.catId);
-  const list=regs.filter(r=>r.progId===p.id).map(r=>{
+  const list=regs.filter(r=>r.progId==p.id).map(r=>{
   const part=parts.find(x=>x.id===r.partId);
   const team=teams.find(t=>t.id==(r.teamId!=null?r.teamId:part?.group));
   return {part,team};
