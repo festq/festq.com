@@ -2239,6 +2239,7 @@ function renderHomePreview() {
   else if (themeStyle==='dark') heroBg = `#0a0a0f`;
   const txtCol = textDark ? '#161616' : '#fff';
   const subCol = textDark ? 'rgba(20,20,20,.75)' : 'rgba(255,255,255,.8)';
+  const hideHeroText = (themeStyle === 'image' && !!homeBanner);
 
   // load the preview fonts on demand
   if (!document.getElementById('homePreviewFontLink')) {
@@ -2248,11 +2249,11 @@ function renderHomePreview() {
   document.head.appendChild(link);
   }
 
-  box.innerHTML = `<div style="background:#0d0d1a;font-family:${fp.b};padding:0"><div style="background:${heroBg};padding:24px 20px;text-align:center;${themeStyle!=='gradient'&&themeStyle!=='dark'?'position:relative':''}">${d.org ? `<div style="font-size:.65rem;letter-spacing:3px;color:${subCol};font-family:'Inter',sans-serif;margin-bottom:6px">${esc(d.org)}</div>` : ''}
+  box.innerHTML = `<div style="background:#0d0d1a;font-family:${fp.b};padding:0"><div style="background:${heroBg};padding:24px 20px;text-align:center;${themeStyle!=='gradient'&&themeStyle!=='dark'?'position:relative':''}${hideHeroText?';min-height:160px':''}">${hideHeroText ? '' : `${d.org ? `<div style="font-size:.65rem;letter-spacing:3px;color:${subCol};font-family:'Inter',sans-serif;margin-bottom:6px">${esc(d.org)}</div>` : ''}
       <div style="font-family:${fp.h};font-size:1.8rem;letter-spacing:2px;color:${txtCol};line-height:1.1">${esc(d.title)||'EVENT NAME'}</div>${d.tagline ? `<div style="font-size:.8rem;color:${subCol};margin-top:6px">${esc(d.tagline)}</div>` : ''}
       ${dateStr || d.venue ? `<div style="margin-top:10px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap">${dateStr?`<span style="font-size:.7rem;color:${subCol};font-family:'Inter',sans-serif"> ${dateStr}</span>`:''}
         ${d.venue?`<span style="font-size:.7rem;color:${subCol};font-family:'Inter',sans-serif"> ${esc(d.venue)}</span>`:''}
-      </div>`:''}
+      </div>`:''}`}
     </div><div style="padding:16px">${d.desc ? `<p style="font-size:.8rem;color:#ccc;line-height:1.6;margin-bottom:12px">${esc(d.desc)}</p>` : ''}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div style="background:rgba(255,255,255,.05);border-radius:8px;padding:10px;text-align:center"><div style="font-family:${fp.h};font-size:1.4rem;color:${d.accent}">${teams.length}</div><div style="font-size:.65rem;color:#888;letter-spacing:1px">TEAMS</div></div><div style="background:rgba(255,255,255,.05);border-radius:8px;padding:10px;text-align:center"><div style="font-family:${fp.h};font-size:1.4rem;color:${d.accent}">${progs.length}</div><div style="font-size:.65rem;color:#888;letter-spacing:1px">PROGRAMS</div></div></div>${d.contact?`<div style="font-size:.7rem;color:#888;text-align:center;font-family:'Inter',sans-serif">${esc(d.contact)}</div>`:''}
     </div></div>`;
@@ -2285,13 +2286,14 @@ function previewPublicPage(type) {
   else if (themeStyle==='dark') heroBgPv = `#0a0a0f`;
   const txtColPv = textDark ? '#161616' : '#fff';
   const subColPv = textDark ? 'rgba(20,20,20,.75)' : 'rgba(255,255,255,.8)';
+  const hideHeroTextPv = (themeStyle === 'image' && !!homeBanner);
 
   if (type === 'home') {
-  body = `<div style="max-width:500px;margin:0 auto;background:#0d0d1a;min-height:100vh"><div style="background:${heroBgPv};padding:40px 24px 32px;text-align:center">${d.org?`<div style="font-size:.65rem;letter-spacing:3px;color:${subColPv};font-family:'Inter','Manjari',sans-serif;margin-bottom:8px">${esc(d.org)}</div>`:''}
+  body = `<div style="max-width:500px;margin:0 auto;background:#0d0d1a;min-height:100vh"><div style="background:${heroBgPv};padding:40px 24px 32px;text-align:center${hideHeroTextPv?';min-height:220px':''}">${hideHeroTextPv ? '' : `${d.org?`<div style="font-size:.65rem;letter-spacing:3px;color:${subColPv};font-family:'Inter','Manjari',sans-serif;margin-bottom:8px">${esc(d.org)}</div>`:''}
         <div style="font-family:${fpv.h};font-size:2.4rem;letter-spacing:3px;color:${txtColPv}">${esc(d.title)||'EVENT'}</div>${d.tagline?`<div style="font-size:.9rem;color:${subColPv};margin-top:8px">${esc(d.tagline)}</div>`:''}
         ${dateStr||d.venue?`<div style="margin-top:14px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap">${dateStr?`<span style="font-size:.75rem;color:${subColPv};font-family:'Inter','Manjari',sans-serif"> ${dateStr}</span>`:''}
           ${d.venue?`<span style="font-size:.75rem;color:${subColPv};font-family:'Inter','Manjari',sans-serif"> ${esc(d.venue)}</span>`:''}
-        </div>`:''}
+        </div>`:''}`}
       </div><div style="padding:20px 16px">${d.desc?`<p style="font-size:.88rem;color:#ccc;line-height:1.7;margin-bottom:20px;padding:14px;background:rgba(255,255,255,.04);border-radius:10px">${esc(d.desc)}</p>`:''}
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px"><div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center"><div style="font-family:${fpv.h};font-size:1.8rem;color:${d.accent||'#1A5FB4'}">${teams.length}</div><div style="font-size:.62rem;color:#888;letter-spacing:1px">TEAMS</div></div><div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center"><div style="font-family:${fpv.h};font-size:1.8rem;color:${d.accent||'#1A5FB4'}">${progs.length}</div><div style="font-size:.62rem;color:#888;letter-spacing:1px">PROGRAMS</div></div><div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center"><div style="font-family:${fpv.h};font-size:1.8rem;color:${d.accent||'#1A5FB4'}">${parts.length}</div><div style="font-size:.62rem;color:#888;letter-spacing:1px">PARTICIPANTS</div></div></div>${anns.length?`<div style="background:rgba(255,255,255,.04);border-radius:12px;padding:14px;margin-bottom:16px"><div style="font-family:${fpv.h};letter-spacing:2px;font-size:.9rem;color:#aaa;margin-bottom:10px">LATEST ANNOUNCEMENTS</div>${anns.slice(0,3).map(a=>`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)"><div style="font-size:.82rem;font-weight:600;color:#fff">${ANN_ICONS[a.type]} ${esc(a.title)}</div>${a.msg?`<div style="font-size:.75rem;color:#aaa;margin-top:3px">${esc(a.msg)}</div>`:''}
           </div>`).join('')}
@@ -2368,6 +2370,7 @@ function generatePublicHTML() {
   const heroTextColor = heroTextDark ? '#161616' : '#fff';
   const heroSubColor = heroTextDark ? 'rgba(20,20,20,.75)' : 'rgba(255,255,255,.7)';
   const heroTagColor = heroTextDark ? 'rgba(20,20,20,.8)' : 'rgba(255,255,255,.8)';
+  const hideHeroText = (themeStyle === 'image' && !!homeBanner);
   const heroMetaColor = heroTextDark ? 'rgba(20,20,20,.7)' : 'rgba(255,255,255,.7)';
 
   // Total published results (programs with at least one recorded score)
@@ -2442,12 +2445,12 @@ function generatePublicHTML() {
   if (incHome) {
   navLinks.push(`<a href="#home" class="nav-link">Home</a>`);
   homeSec = `<section id="home" class="section" style="padding-top:0"><div class="hero">${themeStyle==='gradient'||themeStyle==='dark' ? `<div class="hero-glow hero-glow1"></div><div class="hero-glow hero-glow2"></div>` : ''}
-        <div class="hero-inner">${posterLogo ? `<img src="${posterLogo}" class="hero-logo">` : ''}
+        <div class="hero-inner">${hideHeroText ? '' : `${posterLogo ? `<img src="${posterLogo}" class="hero-logo">` : ''}
           ${d.org ? `<div class="hero-sub">${esc(d.org)}</div>` : ''}
           <h1 class="hero-title">${esc(d.title)||'EVENT'}</h1>${d.tagline ? `<p class="hero-tag">${esc(d.tagline)}</p>` : ''}
           <div class="hero-meta">${dateStr ? `<span> ${dateStr}</span>` : ''}
             ${d.venue ? `<span> ${esc(d.venue)}</span>` : ''}
-          </div>${heroActionsHTML}
+          </div>`}${heroActionsHTML}
           ${searchInnerHTML ? `<div id="search" class="hero-search">${searchInnerHTML}</div>` : ''}
         </div></div><div class="stats-row"><div class="stat-box"><div class="stat-val" style="color:${accent2}">${teams.length}</div><div class="stat-lbl">TEAMS</div></div><div class="stat-box"><div class="stat-val" style="color:${accent2}">${progs.length}</div><div class="stat-lbl">PROGRAMS</div></div><div class="stat-box"><div class="stat-val" style="color:${accent2}">${parts.length}</div><div class="stat-lbl">PARTICIPANTS</div></div><div class="stat-box"><div class="stat-val" style="color:${accent2}">${cats.length}</div><div class="stat-lbl">CATEGORIES</div></div><div class="stat-box"><div class="stat-val" style="color:${accent2}">${doneProgsCount}</div><div class="stat-lbl">RESULTS</div></div></div>${d.desc ? `<div class="card"><p class="desc-text">${esc(d.desc)}</p></div>` : ''}
       ${d.contact ? `<div style="text-align:center;padding:10px 0;font-size:.75rem;color:#888;font-family:'Inter','Manjari',sans-serif">${esc(d.contact)}</div>` : ''}
@@ -2617,7 +2620,7 @@ function generatePublicHTML() {
     .nav-link.active { color:#fff; background: linear-gradient(135deg, ${primary}, ${accent2}); border-color: transparent; box-shadow: 0 3px 12px ${primary}44; }
 
     /* HERO */
-    .hero { position: relative; overflow: hidden; padding: 40px 20px 30px; text-align: center; background: ${heroBg}; }
+    .hero { position: relative; overflow: hidden; padding: 40px 20px 30px; text-align: center; background: ${heroBg}; ${hideHeroText ? 'min-height: 260px;' : ''} }
     ${heroOverlay ? `.hero::after { content:''; position:absolute; inset:0; background:${heroOverlay}; pointer-events:none; z-index:1; }` : ''}
     .hero-glow { position: absolute; border-radius: 50%; pointer-events: none; }
     .hero-glow1 { width: 70vw; max-width: 420px; height: 70vw; max-height: 420px; background: radial-gradient(circle, rgba(255,255,255,.18), transparent 70%); top: -20%; left: -15%; }
