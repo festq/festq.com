@@ -402,6 +402,8 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 <div class="modal-overlay" id="scoreModal"><div class="modal-box" style="max-width:600px"><button class="modal-close" onclick="closeModal('scoreModal')">✕</button><div class="modal-title" id="scoreModalTitle">ENTER SCORES</div><div id="scoreModalBody"></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('scoreModal')">Close</button><button class="btn btn-gold" onclick="closeModal('scoreModal');showToast('Scores saved ✓')">✓ Done</button></div></div>
 </div><!-- USER -->
 <div class="modal-overlay" id="userModal"><div class="modal-box" style="max-width:380px"><button class="modal-close" onclick="closeModal('userModal')">✕</button><div class="modal-title">+ ADD USER</div><div class="form-field"><label>USERNAME</label><input class="form-input" id="nuName" placeholder="Username"></div><div class="form-field"><label>GMAIL ID</label><input class="form-input" type="email" id="nuEmail" placeholder="you@gmail.com"></div><div class="form-field"><label>PASSWORD</label><input class="form-input" type="password" id="nuPass" placeholder="Password"></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Add User</button></div></div>
+</div><!-- UPGRADE LOCK -->
+<div class="modal-overlay" id="upgradeModal"><div class="modal-box" style="max-width:380px;text-align:center"><button class="modal-close" onclick="closeModal('upgradeModal')">✕</button><div style="font-size:2.4rem;margin-bottom:10px">🔒</div><div class="modal-title" style="justify-content:center" id="upgradeModalTitle">FEATURE LOCKED</div><p style="color:var(--muted);font-size:.85rem;margin:10px 0 18px">ഈ ഫീച്ചർ ഈ ഡെമോ വേർഷനിൽ ലഭ്യമല്ല. Full version-ലേക്ക് upgrade ചെയ്യൂ.</p><div class="modal-actions" style="justify-content:center"><button class="btn btn-outline" onclick="closeModal('upgradeModal')">Close</button><button class="btn btn-gold" onclick="window.open('https://wa.me/916238044001?text=FestQ%20Full%20Version%20venam','_blank')">⭐ Upgrade</button></div></div>
 </div><div class="toast" id="toast"></div><script>
 // ═══ DATA ═══
 const TC=['#247DE1','#FF4D6D','#00E57A','#1A5FB4','#00B4D8','#FF9F1C','#A8DADC','#E63946','#9B5DE5','#F72585'];
@@ -509,6 +511,14 @@ async function initAccountsSync() {
   } catch (err) {
   console.warn('Accounts sync failed, using localStorage only:', err.message);
   }
+}
+// Refreshes `users` from the latest shared Firestore copy right before any
+// write, so a stale local list never clobbers accounts added from another
+// device/browser in the meantime.
+async function refreshUsersBeforeWrite() {
+  try { await initAccountsSync(); } catch(e){}
+  users = ld('pr_users', users);
+  return users;
 }
 
 let fbListenerActive = false;
@@ -796,6 +806,7 @@ async function doSignup(){
   const p2=document.getElementById('suPass2').value;
   const err=document.getElementById('signupError');
   err.style.display='none';
+  await refreshUsersBeforeWrite();
   if(!u||u.length<3){err.style.display='block';err.textContent='Min 3 characters for username';return}
   if(users.find(x=>x.username===u)){err.style.display='block';err.textContent='Username already exists';return}
   if(!/^[a-z0-9._%+-]+@gmail\.com$/.test(email)){err.style.display='block';err.textContent='Enter a valid Gmail ID (e.g. you@gmail.com)';return}
@@ -810,6 +821,7 @@ async function doSignup(){
   try {
   const { auth, createUserWithEmailAndPassword } = window.__fbAuth || {};
   const cred = await createUserWithEmailAndPassword(auth, email, p);
+  await refreshUsersBeforeWrite();
   users.push({username:u, email:email, isAdmin:false, uid: cred.user.uid});
   sd('pr_users',users);
   toggleSignup(false);
@@ -865,7 +877,12 @@ function closeSidebar(){
   document.body.style.overflow='';
 }
 
+const LOCKED_PAGES=['fullreport','liveresults','history','announcements','leaderboard','gallery','publish','judgepanel','templates','qrcards','attendance','awards','analytics'];
 function showPage(pg){
+  if(LOCKED_PAGES.includes(pg)){
+  document.getElementById('upgradeModal').classList.add('open');
+  return;
+  }
   document.body.setAttribute('data-current-page', pg);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -3984,6 +4001,7 @@ async function saveUser(){
   const email=document.getElementById('nuEmail').value.trim().toLowerCase();
   const p=document.getElementById('nuPass').value;
   if(!n||!p||!email) return showToast('All fields required!',true);
+  await refreshUsersBeforeWrite();
   if(users.find(u=>u.username===n)) return showToast('Username exists!',true);
   if(users.find(u=>u.email===email)) return showToast('Gmail ID already registered!',true);
   if(p.length<4) return showToast('Password min 4 characters!',true);
@@ -3993,6 +4011,7 @@ async function saveUser(){
   if (saveBtn) { saveBtn.textContent = 'Creating...'; saveBtn.disabled = true; }
   try {
   const uid = await window.__fbAuth.createUserIsolated(email, p);
+  await refreshUsersBeforeWrite();
   users.push({username:n, email, isAdmin:false, uid});
   sd('pr_users',users);
   closeModal('userModal');
@@ -4005,9 +4024,10 @@ async function saveUser(){
   if (saveBtn) { saveBtn.textContent = origText; saveBtn.disabled = false; }
   }
 }
-function delUser(n){
+async function delUser(n){
   if(n===curUser.username) return showToast("Can't delete yourself!",true);
   if(!confirm('Delete user?')) return;
+  await refreshUsersBeforeWrite();
   users=users.filter(u=>u.username!==n);sd('pr_users',users);renderSettings();showToast('Removed.');
 }
 
