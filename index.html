@@ -510,6 +510,14 @@ async function initAccountsSync() {
   console.warn('Accounts sync failed, using localStorage only:', err.message);
   }
 }
+// Refreshes `users` from the latest shared Firestore copy right before any
+// write, so a stale local list never clobbers accounts added from another
+// device/browser in the meantime.
+async function refreshUsersBeforeWrite() {
+  try { await initAccountsSync(); } catch(e){}
+  users = ld('pr_users', users);
+  return users;
+}
 
 let fbListenerActive = false;
 async function initFirebaseSync(onUpdate) {
@@ -796,6 +804,7 @@ async function doSignup(){
   const p2=document.getElementById('suPass2').value;
   const err=document.getElementById('signupError');
   err.style.display='none';
+  await refreshUsersBeforeWrite();
   if(!u||u.length<3){err.style.display='block';err.textContent='Min 3 characters for username';return}
   if(users.find(x=>x.username===u)){err.style.display='block';err.textContent='Username already exists';return}
   if(!/^[a-z0-9._%+-]+@gmail\.com$/.test(email)){err.style.display='block';err.textContent='Enter a valid Gmail ID (e.g. you@gmail.com)';return}
@@ -810,6 +819,7 @@ async function doSignup(){
   try {
   const { auth, createUserWithEmailAndPassword } = window.__fbAuth || {};
   const cred = await createUserWithEmailAndPassword(auth, email, p);
+  await refreshUsersBeforeWrite();
   users.push({username:u, email:email, isAdmin:false, uid: cred.user.uid});
   sd('pr_users',users);
   toggleSignup(false);
@@ -3984,6 +3994,7 @@ async function saveUser(){
   const email=document.getElementById('nuEmail').value.trim().toLowerCase();
   const p=document.getElementById('nuPass').value;
   if(!n||!p||!email) return showToast('All fields required!',true);
+  await refreshUsersBeforeWrite();
   if(users.find(u=>u.username===n)) return showToast('Username exists!',true);
   if(users.find(u=>u.email===email)) return showToast('Gmail ID already registered!',true);
   if(p.length<4) return showToast('Password min 4 characters!',true);
@@ -3993,6 +4004,7 @@ async function saveUser(){
   if (saveBtn) { saveBtn.textContent = 'Creating...'; saveBtn.disabled = true; }
   try {
   const uid = await window.__fbAuth.createUserIsolated(email, p);
+  await refreshUsersBeforeWrite();
   users.push({username:n, email, isAdmin:false, uid});
   sd('pr_users',users);
   closeModal('userModal');
@@ -4005,9 +4017,10 @@ async function saveUser(){
   if (saveBtn) { saveBtn.textContent = origText; saveBtn.disabled = false; }
   }
 }
-function delUser(n){
+async function delUser(n){
   if(n===curUser.username) return showToast("Can't delete yourself!",true);
   if(!confirm('Delete user?')) return;
+  await refreshUsersBeforeWrite();
   users=users.filter(u=>u.username!==n);sd('pr_users',users);renderSettings();showToast('Removed.');
 }
 
