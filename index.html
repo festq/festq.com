@@ -615,8 +615,20 @@ async function doLogin(){
       // notices nothing different, they just typed username + password as always.
   if (f.password !== p) { throw { code: 'legacy-wrong-password' }; }
   btn.textContent = 'Upgrading account security...';
+  let newUid;
+  try {
   const cred = await createUserWithEmailAndPassword(auth, email, p);
-  const newUid = cred.user.uid;
+  newUid = cred.user.uid;
+  } catch (createErr) {
+  if (createErr && createErr.code === 'auth/email-already-in-use') {
+        // This account was already migrated to Firebase Auth from another
+        // device/session before — sign in to it instead of failing.
+  const cred2 = await signInWithEmailAndPassword(auth, email, p);
+  newUid = cred2.user.uid;
+      } else {
+  throw createErr;
+      }
+    }
   const oldDocId = f.username === 'admin' ? 'main' : ('user_' + f.username);
 
       // Copy the old data document over to the new UID-keyed document.
