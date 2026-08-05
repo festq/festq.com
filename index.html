@@ -1045,7 +1045,7 @@ function openRegModal() {
 function saveReg() {
   const name = document.getElementById('regName').value.trim();
   const chest = document.getElementById('regChest').value.trim();
-  const catId = document.getElementById('regCatSel').value;
+  const catId = parseInt(document.getElementById('regCatSel').value) || null;
   const progIds = Array.from(document.querySelectorAll('.regProgCheck:checked')).map(cb =>cb.value);
   const teamId = document.getElementById('regTeamSel').value;
   if (!name) return showToast('Name required!', true);
