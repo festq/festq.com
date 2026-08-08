@@ -489,7 +489,8 @@ function sd(k,v){
   }
   localStorage.setItem(nsKey(k),JSON.stringify(v));
   fbData[k] = v;
-  if (k === 'pr_gallery' || k === 'pr_custom_design' || k === 'pr_custom_design_bg') return; // stay local-only (Firestore 1MB doc limit) — poster logo & home banner are compressed above and DO sync, so they show on the live link
+  if (k === 'pr_poster_logo' || k === 'pr_home_banner') { pushAssetToFirestore(k, v); return; } // own doc — see pushAssetToFirestore
+  if (k === 'pr_gallery' || k === 'pr_custom_design' || k === 'pr_custom_design_bg') return; // stay local-only (Firestore 1MB doc limit)
   pushToFirestore(k, v, false);
 }
 function pushToFirestore(key, value, isAccount) {
@@ -506,6 +507,28 @@ function pushToFirestore(key, value, isAccount) {
   showToast('Data too large to sync online — saved locally only', true);
         } else {
   showToast('Online sync failed (saved locally) — check internet', true);
+        }
+      }
+    })
+    .finally(() => { setTimeout(()=>{fbSuppressEcho=false;}, 300); });
+}
+// Images (poster logo, home banner) go in their OWN Firestore document —
+// separate from the main data doc that already holds teams/results/scores.
+// That main doc fills up its 1MB budget fast as an event grows, which is why
+// logo/banner uploads used to fail to sync silently. A dedicated doc keeps
+// its own independent 1MB budget just for these two image fields.
+function pushAssetToFirestore(key, value) {
+  if (!window.__fbReady || !window.__fb || !FB_DOC_ID) return;
+  const { db, doc, setDoc } = window.__fb;
+  fbSuppressEcho = true;
+  setDoc(doc(db, 'proresult', FB_DOC_ID + '_assets'), { [key]: JSON.stringify(value) }, { merge: true })
+    .catch(err => {
+  console.warn('Asset sync failed:', err.message);
+  if (typeof showToast === 'function') {
+  if (err.code === 'resource-exhausted' || /exceeds the maximum/i.test(err.message)) {
+  showToast('Image too large to sync online — saved locally only', true);
+        } else {
+  showToast('Image sync failed (saved locally) — check internet', true);
         }
       }
     })
@@ -545,6 +568,7 @@ async function initFirebaseSync(onUpdate) {
   if (!window.__fbReady || !window.__fb || !FB_DOC_ID) { return; }
   const { db, doc, getDoc, onSnapshot } = window.__fb;
   const ref = doc(db, 'proresult', FB_DOC_ID);
+  const assetsRef = doc(db, 'proresult', FB_DOC_ID + '_assets');
   try {
   const snap = await getDoc(ref);
   if (snap.exists()) {
@@ -553,6 +577,19 @@ async function initFirebaseSync(onUpdate) {
   try { fbData[k] = JSON.parse(remote[k]); localStorage.setItem(nsKey(k), remote[k]); } catch(e){}
       });
     }
+    // Poster logo / home banner live in their own doc — pull those too so they
+    // show up correctly if this account is opened fresh on another device.
+  try {
+  const assetsSnap = await getDoc(assetsRef);
+  if (assetsSnap.exists()) {
+  const remoteAssets = assetsSnap.data();
+  Object.keys(remoteAssets).forEach(k => {
+  try { fbData[k] = JSON.parse(remoteAssets[k]); localStorage.setItem(nsKey(k), remoteAssets[k]); } catch(e){}
+        });
+      }
+    } catch(e){}
+  if (typeof posterLogo !== 'undefined') posterLogo = ld('pr_poster_logo', posterLogo);
+  if (typeof homeBanner !== 'undefined') homeBanner = ld('pr_home_banner', homeBanner);
   fbReady = true;
   if (fbListenerActive) return; // listener already attached for this session
   fbListenerActive = true;
@@ -2541,13 +2578,17 @@ async function initPublicLinkViewer(rawKey){
 
   const { db, doc, getDoc, onSnapshot } = window.__fb;
   const ref = doc(db, 'proresult', docId);
+  // Poster logo / home banner live in a SEPARATE doc (see pushAssetToFirestore)
+  // so they must be fetched and merged in separately here too.
+  const assetsRef = doc(db, 'proresult', docId + '_assets');
 
-  const renderFromSnap = (snap) => {
-  if (!snap.exists()) { showPublicLinkError(); return; }
-  const raw = snap.data();
-  applyPublicSnapshotToGlobals(raw);
+  let mainRaw = null, assetsRaw = {}, mainSeen = false;
+  const renderCombined = () => {
+  if (!mainSeen) return;
+  if (!mainRaw) { showPublicLinkError(); return; }
+  applyPublicSnapshotToGlobals({ ...mainRaw, ...assetsRaw });
   let settings = publishSettings;
-  try { if (raw.pr_publish_settings) settings = JSON.parse(raw.pr_publish_settings); } catch(e){}
+  try { if (mainRaw.pr_publish_settings) settings = JSON.parse(mainRaw.pr_publish_settings); } catch(e){}
   const html = generatePublicHTML(settings, true);
   const frame = document.getElementById('publicLiveFrame');
   frame.style.display = 'block';
@@ -2557,13 +2598,20 @@ async function initPublicLinkViewer(rawKey){
 
   try {
   const snap = await getDoc(ref);
-  renderFromSnap(snap);
+  mainSeen = true;
+  mainRaw = snap.exists() ? snap.data() : null;
+  try {
+  const assetsSnap = await getDoc(assetsRef);
+  if (assetsSnap.exists()) assetsRaw = assetsSnap.data();
+    } catch(e){}
+  renderCombined();
   } catch(e) {
   console.warn('Public link fetch failed:', e.message);
   showPublicLinkError();
   return;
   }
-  onSnapshot(ref, renderFromSnap, (err) => console.warn('Public link listener failed:', err.message));
+  onSnapshot(ref, (snap) => { mainSeen = true; mainRaw = snap.exists() ? snap.data() : null; renderCombined(); }, (err) => console.warn('Public link listener failed:', err.message));
+  onSnapshot(assetsRef, (snap) => { assetsRaw = snap.exists() ? snap.data() : {}; renderCombined(); }, (err) => console.warn('Public link assets listener failed:', err.message));
 }
 
 function generatePublicHTML(overrideSettings, returnOnly) {
