@@ -2413,7 +2413,9 @@ function savePublishSettings(){
 }
 
 function publicLinkUrl(){
-  return FB_DOC_ID ? (location.origin + location.pathname + '?live=' + encodeURIComponent(FB_DOC_ID)) : '';
+  if (!FB_DOC_ID) return '';
+  const key = (curUser && curUser.slug) ? curUser.slug : FB_DOC_ID;
+  return location.origin + location.pathname + '?live=' + encodeURIComponent(key);
 }
 
 function renderPublicLinkBox(){
@@ -2427,8 +2429,32 @@ function renderPublicLinkBox(){
   box.innerHTML = `<div style="display:flex;align-items:center;gap:6px;background:var(--dark3);border-radius:8px;padding:9px 12px;font-size:.75rem;color:var(--muted);overflow:hidden"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Inter',sans-serif">${url}</span><button class="btn btn-outline btn-xs" onclick="copyPublicLink()">Copy</button></div>`;
 }
 
+function slugify(text){
+  return String(text||'').toLowerCase().trim()
+  .replace(/[^a-z0-9]+/g,'-')
+  .replace(/^-+|-+$/g,'');
+}
 function generatePublicLink(){
   savePublishSettings();
+  if (!FB_DOC_ID) return showToast('ആദ്യം login ചെയ്യുക', true);
+  const base = slugify(homeData && homeData.title);
+  if (curUser) {
+  const u = users.find(x => x.username === curUser.username);
+  if (u) {
+  let slug = base;
+  if (slug) {
+      // Avoid collisions: if another user already has this slug, add a short suffix.
+  let n = 2;
+  while (users.find(x => x.slug === slug && x.username !== curUser.username)) {
+  slug = base + '-' + n;
+  n++;
+        }
+      }
+  u.slug = slug || undefined;
+  curUser.slug = slug || undefined;
+  sd('pr_users', users);
+    }
+  }
   const url = publicLinkUrl();
   if (!url) return showToast('ആദ്യം login ചെയ്യുക', true);
   renderPublicLinkBox();
@@ -2467,13 +2493,24 @@ function showPublicLinkError(){
   if (err) err.style.display = 'flex';
 }
 
-async function initPublicLinkViewer(docId){
+async function initPublicLinkViewer(rawKey){
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('publicLiveWrap').style.display = 'block';
 
   let waited = 0;
   while (!window.__fbReady && waited < 6000) { await new Promise(r=>setTimeout(r,150)); waited += 150; }
   if (!window.__fbReady || !window.__fb) { showPublicLinkError(); return; }
+
+  // rawKey may be a short custom link name (slug) OR the raw Firestore doc id
+  // (old-style links keep working). Resolve slug → doc id via the shared
+  // accounts list before opening the actual event document.
+  let docId = rawKey;
+  try {
+  await initAccountsSync();
+  const allUsers = ld('pr_users', users);
+  const match = allUsers.find(u => u.slug === rawKey);
+  if (match) docId = dataDocIdFor(match.username);
+  } catch(e){}
 
   const { db, doc, getDoc, onSnapshot } = window.__fb;
   const ref = doc(db, 'proresult', docId);
