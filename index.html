@@ -2515,6 +2515,7 @@ function savePublishSettings(){
   incScores: document.getElementById('pubScores')?.checked ?? false,
   };
   sd('pr_publish_settings', publishSettings);
+  sd('pr_youtube_live', document.getElementById('pubYoutubeLive')?.value.trim() || '');
 }
 
 function publicLinkUrl(){
