@@ -489,7 +489,7 @@ function sd(k,v){
   }
   localStorage.setItem(nsKey(k),JSON.stringify(v));
   fbData[k] = v;
-  if (k === 'pr_poster_logo' || k === 'pr_home_banner') { pushAssetToFirestore(k, v); return; } // own doc — see pushAssetToFirestore
+  if (k === 'pr_poster_logo' || k === 'pr_home_banner' || k === 'pr_poster_custom_bg') { pushAssetToFirestore(k, v); return; } // own doc — see pushAssetToFirestore
   if (k === 'pr_gallery' || k === 'pr_custom_design' || k === 'pr_custom_design_bg') return; // stay local-only (Firestore 1MB doc limit)
   pushToFirestore(k, v, false);
 }
@@ -1728,13 +1728,11 @@ function setPosterBg(choice){
 function uploadPosterCustomBg(input) {
   const file = input.files && input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-  posterCustomBg = e.target.result;
+  compressImage(file, 1200, 0.8).then(dataUrl => {
+  posterCustomBg = dataUrl;
   sd('pr_poster_custom_bg', posterCustomBg);
   setPosterBg('custom');
-  };
-  reader.readAsDataURL(file);
+  }).catch(() => showToast('Background upload failed', true));
 }
 function updatePosterBgThumbs(){
   const t1 = document.getElementById('spBgThumb1');
@@ -2547,6 +2545,9 @@ function applyPublicSnapshotToGlobals(raw){
   try { liveSettings = JSON.parse(raw.pr_live || '{}'); } catch(e){ liveSettings = {}; }
   try { if (raw.pr_poster_logo) posterLogo = JSON.parse(raw.pr_poster_logo); } catch(e){}
   try { if (raw.pr_home_banner) homeBanner = JSON.parse(raw.pr_home_banner); } catch(e){}
+  try { if (raw.pr_poster_custom_bg) posterCustomBg = JSON.parse(raw.pr_poster_custom_bg); } catch(e){}
+  try { if (raw.pr_poster_bg_choice) posterBgChoice = JSON.parse(raw.pr_poster_bg_choice); } catch(e){}
+  try { if (raw.pr_poster_tpl) posterTplOpts = JSON.parse(raw.pr_poster_tpl); } catch(e){}
   try { publicViewYoutube = raw.pr_youtube_live ? JSON.parse(raw.pr_youtube_live) : ''; } catch(e){ publicViewYoutube = ''; }
 }
 
