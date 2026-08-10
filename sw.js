@@ -2,9 +2,9 @@ const CACHE_NAME = 'festq-cache-v1';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-512-maskable.png'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (event) => {
