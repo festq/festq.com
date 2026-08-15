@@ -915,6 +915,30 @@ function emergencyReset(){
   document.getElementById('liPass').value='';
   showLoginToast('Reset complete! Password: dh@2026');
 }
+// ═══ NEW SIGNUP → EMAIL NOTIFICATION (EmailJS, free) ═══
+// Setup (one-time, done by you — see chat for the step-by-step):
+// 1. Create a free account at https://www.emailjs.com
+// 2. Add an Email Service (e.g. connect your Gmail) → copy its Service ID
+// 3. Create an Email Template with {{username}}, {{email}}, {{time}} variables → copy its Template ID
+// 4. Account → General → copy your Public Key
+// 5. Paste all three into the constants below.
+const EMAILJS_PUBLIC_KEY  = 'hXGhIHI9PKx1jOvop';
+const EMAILJS_SERVICE_ID  = 'service_7apqgpr';
+const EMAILJS_TEMPLATE_ID = 'template_fvuc1x4';
+let __emailjsLoaded = false;
+async function notifyNewSignupEmail(username, email){
+  if ([EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID].some(v => !v || v.startsWith('PASTE_YOUR_'))) return;
+  try {
+  if (!__emailjsLoaded) {
+  await loadScript('https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js');
+  window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  __emailjsLoaded = true;
+  }
+  await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+  username, email, time: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+  });
+  } catch(e) { /* silent — signup should never fail because of this */ }
+}
 async function doSignup(){
   const u=document.getElementById('suUser').value.trim();
   const email=document.getElementById('suEmail').value.trim().toLowerCase();
@@ -940,6 +964,7 @@ async function doSignup(){
   await refreshUsersBeforeWrite();
   users.push({username:u, email:email, isAdmin:false, uid: cred.user.uid});
   sd('pr_users',users);
+  notifyNewSignupEmail(u, email);
   toggleSignup(false);
   document.getElementById('liUser').value=u;
   document.getElementById('liPass').value='';
