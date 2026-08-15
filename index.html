@@ -307,7 +307,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 </style>
 <script type="module">import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
   apiKey: "AIzaSyBFSOF-Vz7syihGrDUdbeu_z5fTHOskUvw",
@@ -343,7 +343,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 
   // Expose to global scope for use in main script
   window.__fb = { db, doc, getDoc, setDoc, deleteDoc, onSnapshot };
-  window.__fbAuth = { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, createUserIsolated };
+  window.__fbAuth = { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, createUserIsolated, deleteUser };
   window.__fbReady = true;
 </script>
 </head>
@@ -415,6 +415,17 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
       <div class="page" id="page-about">
         <div class="prog-header"><h2>ABOUT</h2></div>
         <div class="card" style="max-width:480px"><div class="card-title">CONTACT &amp; SUPPORT</div><div style="display:flex;flex-direction:column;gap:10px"><a href="mailto:dezignhub44@gmail.com" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--dark3);text-decoration:none;color:var(--text)"><span style="font-size:1.1rem">✉️</span><div><div style="font-size:.68rem;color:var(--muted);letter-spacing:.5px">EMAIL</div><div style="font-size:.85rem;font-weight:600">dezignhub44@gmail.com</div></div></a><a href="tel:+916238044001" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--dark3);text-decoration:none;color:var(--text)"><span style="font-size:1.1rem">📞</span><div><div style="font-size:.68rem;color:var(--muted);letter-spacing:.5px">PHONE</div><div style="font-size:.85rem;font-weight:600">+91 6238044001</div></div></a><a href="https://instagram.com/festq.official" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--dark3);text-decoration:none;color:var(--text)"><span style="font-size:1.1rem">📷</span><div><div style="font-size:.68rem;color:var(--muted);letter-spacing:.5px">INSTAGRAM</div><div style="font-size:.85rem;font-weight:600">@festq.official</div></div></a><div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--dark3)"><span style="font-size:1.1rem">🏷️</span><div><div style="font-size:.68rem;color:var(--muted);letter-spacing:.5px">VERSION</div><div style="font-size:.85rem;font-weight:600">v1.2.0</div></div></div></div></div>
+
+        <!-- DELETE ACCOUNT -->
+        <div class="card" style="max-width:480px;margin-top:16px;border:1px solid rgba(224,52,79,.25);background:rgba(224,52,79,.03)">
+          <div class="card-title" style="color:var(--red)">⚠️ DELETE ACCOUNT</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.6">
+            Ith ningalude account permanent aayi delete cheyyum — Firebase-il ninnu ningalude muzhuvan data (teams, programs, scores, gallery, settings എല്ലാം) permanently നീക്കം ചെയ്യപ്പെടും. Ith undo ചെയ്യാൻ സാധിക്കില്ല.
+          </div>
+          <div class="form-field"><label>CURRENT PASSWORD</label><input class="form-input" type="password" id="delAccPass" placeholder="Confirm your password"></div>
+          <button class="btn btn-red btn-sm" onclick="deleteMyAccount()">Delete My Account</button>
+          <div id="delAccMsg" style="margin-top:10px;font-size:.82rem;display:none"></div>
+        </div>
       </div>
 
       <!-- ── SETTINGS ── --><div class="page" id="page-settings"><div class="prog-header"><h2>SETTINGS</h2></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px"><div class="card"><div class="card-title">Change Password</div><div class="form-field"><label>CURRENT PASSWORD</label><input class="form-input" type="password" id="curPass" placeholder="Current"></div><div class="form-field"><label>NEW PASSWORD</label><input class="form-input" type="password" id="newPass" placeholder="New (min 4 chars)"></div><div class="form-field"><label>CONFIRM</label><input class="form-input" type="password" id="conPass" placeholder="Confirm"></div><button class="btn btn-primary btn-sm" onclick="changePassword()">Save</button><div id="passMsg" style="margin-top:10px;font-size:.82rem;display:none"></div></div><div class="card"><div class="card-title">Users</div><div id="usersList"></div><button class="btn btn-outline btn-sm" onclick="openUserModal()" style="margin-top:12px">+ Add User</button></div></div><!-- ALL USERS' DATA (Admin only) --><div style="max-width:700px;margin-top:16px"><div class="card" id="allUsersDataCard" style="display:none;border:1px solid rgba(36,125,225,.2);background:rgba(36,125,225,.03)"><div class="card-title">All Users' Data (Admin)</div><div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">Ella registered user-ntെയും ഡാറ്റ ഇവിടെ നിന്ന് കാണാനും, ആവശ്യമെങ്കിൽ ക്ലിയർ ചെയ്യാനും സാധിക്കും.</div><div id="allUsersDataList"></div></div></div><!-- CLEAR DATA --><div style="max-width:700px;margin-top:16px"><div class="card" style="border:1px solid rgba(224,52,79,.2);background:rgba(224,52,79,.03)"><div class="card-title" style="color:var(--red)">Clear Data <span style="font-weight:400;font-size:.68rem;color:var(--muted)">(my account)</span></div><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)"><div><div style="font-size:.85rem;font-weight:600">Participants & Registrations</div><div style="font-size:.72rem;color:var(--muted)">Parts list, registrations clear ആകും</div></div><button class="btn btn-red btn-sm" onclick="clearData('parts')">Clear</button></div><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)"><div><div style="font-size:.85rem;font-weight:600">Scores & Mark Entry</div><div style="font-size:.72rem;color:var(--muted)">Teams scores, judge marks clear ആകും</div></div><button class="btn btn-red btn-sm" onclick="clearData('scores')">Clear</button></div><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)"><div><div style="font-size:.85rem;font-weight:600">Programs & Categories</div><div style="font-size:.72rem;color:var(--muted)">Competitions, categories clear ആകും</div></div><button class="btn btn-red btn-sm" onclick="clearData('programs')">Clear</button></div><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)"><div><div style="font-size:.85rem;font-weight:600">Announcements</div><div style="font-size:.72rem;color:var(--muted)">All announcements clear ആകും</div></div><button class="btn btn-red btn-sm" onclick="clearData('anns')">Clear</button></div><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><div><div style="font-size:.85rem;font-weight:600;color:var(--red)">Clear ALL Data</div><div style="font-size:.72rem;color:var(--muted)">Teams, participants, programs, scores, announcements — എല്ലാം ഒഴിവാകും</div></div><button class="btn btn-red btn-sm" onclick="clearData('all')">Clear All</button></div></div></div></div></div></div><!-- /content-area --><footer class="app-footer">© 2026 DEZIGN HUB · ALL RIGHTS RESERVED</footer></div><!-- /main -->
@@ -4750,6 +4761,69 @@ async function changePassword(){
   } catch(e) {
   msg.style.display='block';msg.style.color='var(--red)';
   msg.textContent = e && e.code === 'auth/wrong-password' ? ' Wrong current password' : ' Could not change password — check internet';
+  }
+}
+async function deleteMyAccount(){
+  const msg = document.getElementById('delAccMsg');
+  msg.style.display='none';
+  if (!curUser) return;
+  const pass = document.getElementById('delAccPass').value;
+  if (!pass) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent=' Password enter cheyyuka'; return; }
+
+  await refreshUsersBeforeWrite();
+  if (users.length <= 1) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent=' Last account delete cheyyan pattilla — atleast oru account venam'; return; }
+
+  if (!confirm('Ningalude account & muzhuvan data permanent aayi delete cheyyanam ennu urapp aano? Ith undo cheyyan pattilla.')) return;
+
+  const { auth, EmailAuthProvider, reauthenticateWithCredential, deleteUser, signOut } = window.__fbAuth || {};
+  if (!auth || !auth.currentUser) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent=' Not signed in — please re-login and try again'; return; }
+
+  const delUsername = curUser.username;
+  const delDocId = FB_DOC_ID;
+
+  const btn = document.querySelector('#page-about .btn-red');
+  const origText = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = 'Deleting...'; btn.disabled = true; }
+
+  try {
+    const credential = EmailAuthProvider.credential(auth.currentUser.email, pass);
+    await reauthenticateWithCredential(auth.currentUser, credential);
+
+    // Remove this user's Firestore documents (main data + assets doc).
+    if (window.__fbReady && window.__fb && delDocId) {
+      const { db, doc, deleteDoc } = window.__fb;
+      try { await deleteDoc(doc(db, 'proresult', delDocId)); } catch(e){}
+      try { await deleteDoc(doc(db, 'proresult', delDocId + '_assets')); } catch(e){}
+    }
+
+    // Remove from the shared account directory.
+    await refreshUsersBeforeWrite();
+    users = users.filter(u => u.username !== delUsername);
+    sd('pr_users', users);
+
+    // Delete the Firebase Auth account itself.
+    await deleteUser(auth.currentUser);
+
+    // Wipe this user's locally-namespaced cached data.
+    const suffix = '__u_' + delUsername;
+    Object.keys(localStorage).filter(k => k.endsWith(suffix)).forEach(k => localStorage.removeItem(k));
+
+    if (fbUnsubscribe) { try{fbUnsubscribe();}catch(e){} fbUnsubscribe = null; }
+    fbListenerActive = false;
+    fbData = {};
+    FB_DOC_ID = null;
+    curUser = null;
+
+    showToast('Account deleted ✓');
+    document.getElementById('appShell').style.display='none';
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('liUser').value='';
+    document.getElementById('liPass').value='';
+  } catch(e) {
+    msg.style.display='block'; msg.style.color='var(--red)';
+    msg.textContent = e && e.code === 'auth/wrong-password' ? ' Wrong password' : ' Account delete cheyyan sadhichilla — check internet';
+  } finally {
+    if (btn) { btn.textContent = origText; btn.disabled = false; }
   }
 }
 function openUserModal(){openModal('userModal')}
