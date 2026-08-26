@@ -1839,6 +1839,18 @@ function openScoreModal(pid){
 
 function renderScoreModal(pid){
   const prog=progs.find(p=>p.id===pid);
+  // Backfill: scores entered via Mark Entry / Judge Panel used to be saved
+  // without an id, which silently broke the ✕ delete button here — nothing
+  // matched, so delete did nothing and the team's total never dropped.
+  // Assign a proper id the first time this modal opens so old entries
+  // become deletable too (new entries already get one when saved).
+  let idsFixed=false;
+  teams.forEach(t=>{
+  (t.members||[]).forEach(m=>{
+  if(!m.id){ m.id='m'+Date.now()+Math.random().toString(36).slice(2); idsFixed=true; }
+    });
+  });
+  if(idsFixed) sd('pr_teams',teams);
   let html=`<div style="color:var(--muted);font-size:.76rem;margin-bottom:14px;font-family:'Inter','Manjari',sans-serif">MAX ${prog.maxScore} PTS PER PARTICIPANT</div>`;
   teams.forEach((t,ti)=>{
   const ms=getMProg(pid,t.id);
@@ -4356,7 +4368,7 @@ function submitMeMarks() {
   if (!team.members) team.members = [];
   const existIdx = team.members.findIndex(m =>String(m.pid) === String(prog.id) && m.name === part.name);
   if (existIdx >= 0) team.members[existIdx].score = score;
-  else team.members.push({ pid: prog.id, name: part.name, score });
+  else team.members.push({ id:'m'+Date.now()+Math.random().toString(36).slice(2), pid: prog.id, name: part.name, score });
   saved++;
   });
 
@@ -4631,7 +4643,7 @@ function submitJpMarks() {
   if (!team.members) team.members = [];
   const existIdx = team.members.findIndex(m =>String(m.pid) === String(prog.id) && m.name === part.name);
   if (existIdx >= 0) team.members[existIdx].score = score;
-  else team.members.push({ pid: prog.id, name: part.name, score });
+  else team.members.push({ id:'m'+Date.now()+Math.random().toString(36).slice(2), pid: prog.id, name: part.name, score });
   saved++;
   });
   sd('pr_teams', teams);
