@@ -316,7 +316,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 </style>
 <script type="module">import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, deleteUser, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
   apiKey: "AIzaSyBFSOF-Vz7syihGrDUdbeu_z5fTHOskUvw",
@@ -352,7 +352,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 
   // Expose to global scope for use in main script
   window.__fb = { db, doc, getDoc, setDoc, deleteDoc, onSnapshot };
-  window.__fbAuth = { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, createUserIsolated, deleteUser };
+  window.__fbAuth = { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut, createUserIsolated, deleteUser, sendEmailVerification };
   window.__fbReady = true;
 </script>
 </head>
@@ -722,16 +722,38 @@ async function doLogin(){
   const u=document.getElementById('liUser').value.trim();
   const p=document.getElementById('liPass').value;
   const f=users.find(x=>x.username===u);
-  if(!f){ btn.textContent = origText; btn.disabled = false; document.getElementById('loginError').style.display='block';document.getElementById('liPass').value='';return }
+  if(!f){ btn.textContent = origText; btn.disabled = false; const le=document.getElementById('loginError'); le.textContent='Invalid username or password'; le.style.display='block';document.getElementById('liPass').value='';return }
 
-  const { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } = window.__fbAuth || {};
+  const { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, signOut } = window.__fbAuth || {};
   const email = emailForUsername(f.username);
 
   try {
   if (f.uid) {
       // Already migrated to Firebase Auth — real, server-verified login.
   btn.textContent = 'Signing in...';
-  await signInWithEmailAndPassword(auth, email, p);
+  const cred = await signInWithEmailAndPassword(auth, email, p);
+      // Accounts created via public Sign Up must verify their Gmail before
+      // their first login. Accounts added by an admin (Settings → + Add
+      // User) or migrated legacy accounts never get this flag, so they're
+      // unaffected.
+  if (f.emailVerifyRequired) {
+  if (cred.user.emailVerified) {
+          // Verified since signup — clear the flag so we don't check again.
+  users = users.map(x => x.username === f.username ? { ...x, emailVerifyRequired: false } : x);
+  f.emailVerifyRequired = false;
+  sd('pr_users', users);
+        } else {
+  try { await signOut(auth); } catch(e){}
+  btn.textContent = origText; btn.disabled = false;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'block';
+  errEl.innerHTML = `Please verify your Gmail first — check your inbox for the verification link. <span onclick="resendVerification()" style="text-decoration:underline;cursor:pointer;color:var(--accent)">Resend email</span>`;
+  // NOTE: deliberately NOT clearing the password field here (unlike other
+  // login errors) — resendVerification() below needs it to briefly
+  // re-authenticate and re-trigger the verification email.
+  return;
+        }
+      }
     } else {
       // Legacy account created before Firebase Auth was added. Verify against
       // the old stored password once, then transparently create their real
@@ -772,7 +794,8 @@ async function doLogin(){
     }
   } catch(err) {
   btn.textContent = origText; btn.disabled = false;
-  document.getElementById('loginError').style.display='block';
+  const le=document.getElementById('loginError'); le.textContent='Invalid username or password';
+  le.style.display='block';
   document.getElementById('liPass').value='';
   return;
   }
@@ -811,6 +834,27 @@ async function doLogin(){
   // Re-check periodically so an admin turning the lock ON mid-session takes
   // effect without requiring the user to log out first.
   setInterval(async () => { try { await initAccountsSync(); users = ld('pr_users', users); checkUpgradeLock(); } catch(e){} }, 20000);
+}
+
+async function resendVerification(){
+  const u = document.getElementById('liUser').value.trim();
+  const p = document.getElementById('liPass').value;
+  const f = users.find(x => x.username === u);
+  if (!f || !p) { showLoginToast('Enter your username and password, then try again.'); return; }
+  const { auth, signInWithEmailAndPassword, sendEmailVerification, signOut } = window.__fbAuth || {};
+  const email = emailForUsername(f.username);
+  try {
+  const cred = await signInWithEmailAndPassword(auth, email, p);
+  if (cred.user.emailVerified) {
+  showLoginToast('This account is already verified — please login.');
+    } else {
+  await sendEmailVerification(cred.user);
+  showLoginToast('Verification email sent again — check your inbox.');
+    }
+  try { await signOut(auth); } catch(e){}
+  } catch(e) {
+  showLoginToast('Could not resend — check your username/password and try again.');
+  }
 }
 function reloadAllData(){
   users=ld('pr_users',users);
@@ -984,16 +1028,21 @@ async function doSignup(){
   if (btn) { btn.textContent = 'Creating account...'; btn.disabled = true; }
 
   try {
-  const { auth, createUserWithEmailAndPassword } = window.__fbAuth || {};
+  const { auth, createUserWithEmailAndPassword, sendEmailVerification, signOut } = window.__fbAuth || {};
   const cred = await createUserWithEmailAndPassword(auth, email, p);
+  try { await sendEmailVerification(cred.user); } catch(e) { console.warn('Verification email failed to send:', e.message); }
+  // createUserWithEmailAndPassword auto-signs-in as the new user; sign
+  // back out immediately so doLogin() runs its own clean sign-in (and its
+  // email-verified check) the first time they actually try to log in.
+  try { await signOut(auth); } catch(e){}
   await refreshUsersBeforeWrite();
-  users.push({username:u, email:email, isAdmin:false, uid: cred.user.uid});
+  users.push({username:u, email:email, isAdmin:false, uid: cred.user.uid, emailVerifyRequired:true});
   sd('pr_users',users);
   notifyNewSignupEmail(u, email);
   toggleSignup(false);
   document.getElementById('liUser').value=u;
   document.getElementById('liPass').value='';
-  showLoginToast('Account created! Please login.');
+  showLoginToast('Verification email sent! Check your Gmail inbox, click the link, then login.');
   } catch(e) {
   err.style.display='block';
   err.textContent = e && e.code === 'auth/email-already-in-use' ? 'This Gmail ID is already registered' : 'Could not create account — check internet and try again';
