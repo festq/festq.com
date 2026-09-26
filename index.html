@@ -313,6 +313,28 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 .mob-menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer;padding:6px;border-radius:8px}
 .mob-menu-btn:active{background:rgba(20,20,40,.08)}
 
+.ai-fab{position:fixed;right:22px;bottom:22px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1B3AB0);box-shadow:0 10px 30px rgba(41,82,227,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:500;border:none;color:#fff;font-size:24px}
+.ai-fab:hover{transform:scale(1.06)}
+.ai-fab-dot{position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#00e57a;border:2px solid #fff}
+.ai-panel{position:fixed;right:22px;bottom:92px;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 140px);background:var(--dark2);border-radius:20px;box-shadow:0 24px 60px rgba(14,26,61,.25);display:flex;flex-direction:column;overflow:hidden;z-index:501;opacity:0;pointer-events:none;transform:translateY(16px) scale(.97);transition:all .2s ease;border:1px solid rgba(20,20,40,.08)}
+.ai-panel.open{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+.ai-head{background:linear-gradient(135deg,var(--accent),#1B3AB0);color:#fff;padding:18px 18px 16px;position:relative;flex-shrink:0}
+.ai-head h3{font-family:'Inter','Manjari',sans-serif;font-size:1.05rem;font-weight:700;margin:0}
+.ai-head p{color:rgba(255,255,255,.85);font-size:.78rem;margin-top:4px}
+.ai-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.18);border:none;color:#fff;width:26px;height:26px;border-radius:8px;cursor:pointer;font-size:13px}
+.ai-guide{font-size:.68rem;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;margin-top:10px;display:inline-block;line-height:1.4}
+.ai-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-msg{max-width:85%;padding:10px 13px;border-radius:14px;font-size:.83rem;line-height:1.55}
+.ai-msg.bot{background:rgba(41,82,227,.08);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.ai-msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.ai-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px;flex-shrink:0}
+.ai-chip{font-size:.71rem;background:rgba(41,82,227,.08);border:1px solid rgba(41,82,227,.22);color:var(--accent);padding:6px 10px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.ai-chip:hover{background:rgba(41,82,227,.16)}
+.ai-input-row{display:flex;gap:8px;padding:12px 14px;border-top:1px solid rgba(20,20,40,.08);flex-shrink:0}
+.ai-input{flex:1;border:1px solid rgba(20,20,40,.14);background:rgba(41,82,227,.05);border-radius:12px;padding:10px 12px;font-size:.83rem;font-family:inherit;color:var(--text)}
+.ai-send{background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:15px;flex-shrink:0}
+@media(max-width:480px){.ai-panel{right:12px;left:12px;width:auto;bottom:82px}}
+
 </style>
 <script type="module">import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -5336,6 +5358,107 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }
+
+// ═══ FESTQ AI ASSISTANT ═══
+function toggleAI(){
+  const p=document.getElementById('aiPanel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open') && !document.getElementById('aiBody').dataset.greeted){
+    aiAppendMsg('bot','Hi! I can check today\'s schedule, team points, live results and more — tap a quick option below or type your question in Malayalam or English.');
+    document.getElementById('aiBody').dataset.greeted='1';
+  }
+  if(p.classList.contains('open')) document.getElementById('aiInput').focus();
+}
+function aiAppendMsg(role,html){
+  const b=document.getElementById('aiBody');
+  const d=document.createElement('div');
+  d.className='ai-msg '+role;
+  d.innerHTML=html;
+  b.appendChild(d);
+  b.scrollTop=b.scrollHeight;
+}
+function aiIsML(s){return /[\u0D00-\u0D7F]/.test(s)}
+function aiSend(preset){
+  const inp=document.getElementById('aiInput');
+  const text=(preset!==undefined?preset:inp.value).trim();
+  if(!text) return;
+  aiAppendMsg('user',esc(text));
+  if(preset===undefined) inp.value='';
+  setTimeout(()=>{aiAppendMsg('bot',festAIReply(text))},280);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.ai-chip').forEach(c=>c.addEventListener('click',()=>aiSend(c.getAttribute('data-q'))));
+});
+function festAIReply(qRaw){
+  const q=qRaw.toLowerCase();
+  const ml=aiIsML(qRaw);
+  const today=new Date().toISOString().slice(0,10);
+  const nowT=new Date().toTimeString().slice(0,5);
+  const foundTeam=teams.find(t=>qRaw.toLowerCase().includes((t.name||'').toLowerCase()));
+
+  if(/today|ഇന്ന്/.test(qRaw)||/today/.test(q)){
+    const todays=schedule.filter(e=>e.date===today).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+    if(!todays.length) return ml?'ഇന്ന് ഷെഡ്യൂൾ ചെയ്ത പ്രോഗ്രാമുകൾ ഒന്നും ഇല്ല.':'No programs are scheduled for today.';
+    const lines=todays.map(e=>'• '+(e.start||'--:--')+' — <b>'+esc(e.name)+'</b>'+(e.venue?' ('+esc(e.venue)+')':'')).join('<br>');
+    return (ml?'ഇന്നത്തെ ഷെഡ്യൂൾ:<br>':"Today's schedule:<br>")+lines;
+  }
+  if(foundTeam||/team|points|ടീം|പോയിന്റ്/.test(q)){
+    if(foundTeam){
+      return (ml?(esc(foundTeam.name)+' ന്റെ ആകെ പോയിന്റ്: '):(esc(foundTeam.name)+"'s total points: "))+'<b>'+teamTotal(foundTeam)+'</b>';
+    }
+    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a));
+    const lines=ranked.map((t,i)=>(i+1)+'. <b>'+esc(t.name)+'</b> — '+teamTotal(t)+' pts').join('<br>');
+    return (ml?'നിലവിലെ ടീം സ്റ്റാൻഡിംഗ്:<br>':'Current team standings:<br>')+lines;
+  }
+  if(/live|result|ലൈവ്|റിസൽട്ട്/.test(q)){
+    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a)).slice(0,3);
+    if(!ranked.some(t=>teamTotal(t)>0)) return ml?'ഇതുവരെ സ്കോർ എന്റ്രി ചെയ്തിട്ടില്ല.':'No scores have been entered yet.';
+    const medals=['🥇','🥈','🥉'];
+    const lines=ranked.map((t,i)=>(medals[i]||'')+' <b>'+esc(t.name)+'</b> — '+teamTotal(t)+' pts').join('<br>');
+    setTimeout(()=>showPage('liveresults'),500);
+    return (ml?'ലൈവ് റിസൽട്ട്‌സ് തുറക്കുന്നു...<br>':'Opening Live Results…<br>')+lines;
+  }
+  if(/add.*particip|new participant|പങ്കാളിയെ.*ചേർ/.test(q)){
+    setTimeout(()=>{showPage('participants');openPartModal();},350);
+    return ml?'പുതിയ പങ്കാളിയെ ചേർക്കാനുള്ള ഫോം തുറക്കുന്നു...':'Opening the Add Participant form…';
+  }
+  if(/next program|next event|അടുത്ത പ്രോഗ്രാം|അടുത്തത്/.test(q)){
+    const upcoming=schedule.filter(e=>e.date && (e.date>today || (e.date===today && (e.start||'23:59')>=nowT)))
+      .sort((a,b)=>((a.date||'')+(a.start||'')).localeCompare((b.date||'')+(b.start||'')));
+    if(!upcoming.length) return ml?'വരാനിരിക്കുന്ന പ്രോഗ്രാമുകൾ ഒന്നും ഷെഡ്യൂളിൽ ഇല്ല.':'No upcoming programs found in the schedule.';
+    const e=upcoming[0];
+    return (ml?'അടുത്ത പ്രോഗ്രാം:<br>':'Next up:<br>')+'<b>'+esc(e.name)+'</b><br>'+(e.date||'')+' · '+(e.start||'--:--')+(e.venue?' · '+esc(e.venue):'');
+  }
+  if(/how to use|explain|help|എങ്ങനെ ഉപയോഗ|സഹായ/.test(q)){
+    setTimeout(()=>showPage('help'),350);
+    return ml?'FestQ എങ്ങനെ ഉപയോഗിക്കാം എന്ന പേജ് തുറക്കുന്നു — എല്ലാ സ്റ്റെപ്പുകളും അവിടെ കാണാം.':'Opening the "How to use FestQ" guide — you\'ll find full step-by-step instructions there.';
+  }
+  return ml?'ക്ഷമിക്കണം, മനസ്സിലായില്ല. Results, Schedule, Participants, Teams അല്ലെങ്കിൽ Competition-നെ കുറിച്ച് ചോദിക്കൂ.':"Sorry, I didn't quite catch that — try asking about Results, Schedule, Participants, Teams or Competition, or tap a quick option below.";
+}
+
 </script>
+<button class="ai-fab" id="aiFab" onclick="toggleAI()" aria-label="FestQ AI Assistant">💬<span class="ai-fab-dot"></span></button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head">
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+    <h3>FestQ AI Assistant</h3>
+    <p>How can I help you?</p>
+    <span class="ai-guide">You can ask me about Results, Schedule, Participants, Teams &amp; Competition</span>
+  </div>
+  <div class="ai-body" id="aiBody"></div>
+  <div class="ai-quick" id="aiQuick">
+    <span class="ai-chip" data-q="Show today's schedule">Show today's schedule</span>
+    <span class="ai-chip" data-q="Check Team points">Check Team points</span>
+    <span class="ai-chip" data-q="Show live results">Show live results</span>
+    <span class="ai-chip" data-q="Add a participant">Add a participant</span>
+    <span class="ai-chip" data-q="Find the next program">Find the next program</span>
+    <span class="ai-chip" data-q="Explain how to use FestQ">Explain how to use FestQ</span>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="aiInput" placeholder="Ask in Malayalam or English…">
+    <button class="ai-send" onclick="aiSend()">➤</button>
+  </div>
+</div>
+
 </body>
 </html>
