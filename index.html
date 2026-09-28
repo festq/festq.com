@@ -395,7 +395,7 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
                   </label><label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.78rem"><input type="checkbox" id="elOrg" checked onchange="saveTplOpts();refreshStudentPoster()" style="accent-color:var(--accent)">Organizer
                   </label></div><div class="form-field" style="margin-bottom:0"><label>DESCRIPTION (shown at the bottom)</label><textarea class="form-input" id="spQuote" rows="2" placeholder="Short note about the event / organizer..." oninput="refreshStudentPoster()"></textarea></div></div></div><!-- RIGHT: Live Preview --><div style="position:sticky;top:80px;align-self:start"><div class="card" style="padding:10px"><div class="card-title" style="margin-bottom:8px">LIVE PREVIEW (1051×1280)</div><div id="studentPosterPreviewOuter" style="border-radius:10px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3);position:relative;width:100%"><div id="studentPosterPreview" style="position:relative;overflow:hidden"></div></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-primary btn-sm" style="flex:1" onclick="downloadStudentPoster()">Download</button><button class="btn btn-outline btn-sm" style="flex:1" onclick="downloadStudentPosterJPG()">JPG</button><button class="btn btn-outline btn-sm" style="flex:1" onclick="printStudentPoster()">Print</button></div></div></div></div></div><!-- ══ TEAM POINTS POSTER ══ --><div id="tplTeamsSection" style="display:none"><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><!-- LEFT: Controls --><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="card-title">CUSTOMIZE</div><div class="form-field" style="margin-bottom:8px"><label>EVENT NAME</label><input class="form-input" id="tplEventName" placeholder="Annual Arts Fest 2026" oninput="saveTplOpts();renderTeamsPoster()"></div><div class="form-field" style="margin-bottom:8px"><label>EDITION <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input class="form-input" id="tplEdition" placeholder="e.g. 4th Edition" oninput="saveTplOpts();renderTeamsPoster()"></div><div class="form-field" style="margin-bottom:8px"><label>ORGANIZER</label><input class="form-input" id="tplOrg" placeholder="School / Institution" oninput="saveTplOpts();renderTeamsPoster()"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px"><div class="form-field" style="margin-bottom:0"><label>DATE</label><input class="form-input" id="tplDate" type="date" oninput="saveTplOpts();renderTeamsPoster()"></div><div class="form-field" style="margin-bottom:0"><label>VENUE</label><input class="form-input" id="tplVenue" placeholder="Venue" oninput="saveTplOpts();renderTeamsPoster()"></div></div><div class="form-field" style="margin-bottom:8px"><label>ACCENT COLOR</label><input type="color" id="tplAccent" value="#e8d84a" oninput="saveTplOpts();renderTeamsPoster()" style="height:40px;width:100%;border-radius:10px;border:1px solid rgba(255,255,255,.1);cursor:pointer"></div><div class="form-field" style="margin-bottom:8px"><label>LOGO (shown instead of the initial letter)</label><div style="display:flex;align-items:center;gap:10px"><div id="tplLogoPreview" style="width:40px;height:40px;border-radius:12px;overflow:hidden;flex-shrink:0;background:var(--dark4);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--muted)">—</div><input type="file" id="tplLogoUpload" accept="image/*" style="display:none" onchange="uploadPosterLogo(this,'teams')"><button class="btn btn-outline btn-sm" style="flex:1" onclick="document.getElementById('tplLogoUpload').click()">Upload Logo</button><button class="btn btn-outline btn-sm" onclick="removePosterLogo('teams')">✕</button></div></div><div class="form-field" style="margin-bottom:0"><label>DESCRIPTION (shown at the bottom)</label><textarea class="form-input" id="tplDesc" rows="2" placeholder="Short note about the event / organizer..." oninput="saveTplOpts();renderTeamsPoster()"></textarea></div></div><div class="card"><div class="card-title">RESULTS</div><div class="form-field" style="margin-bottom:0"><label>AFTER (RESULTS COUNT)</label><input class="form-input" id="tplResultsCount" type="number" min="0" placeholder="e.g. 25" oninput="saveTeamsOpts();renderTeamsPoster()"><div style="font-size:.65rem;color:var(--muted);margin-top:4px">ഇത് വരെ പ്രഖ്യാപിച്ച results/programs എണ്ണം — poster-ൽ "After N Results" ആയി കാണിക്കും</div></div></div></div><!-- RIGHT: Live Preview --><div style="position:sticky;top:80px;align-self:start"><div class="card" style="padding:10px"><div class="card-title" style="margin-bottom:8px">LIVE PREVIEW (1051×1280)</div><div id="teamsPosterPreviewOuter" style="border-radius:10px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3);position:relative;width:100%"><div id="teamsPosterPreview" style="position:relative;overflow:hidden"></div></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-primary btn-sm" style="flex:1" onclick="downloadTeamsPoster()">Download</button><button class="btn btn-outline btn-sm" style="flex:1" onclick="downloadTeamsPosterJPG()">JPG</button><button class="btn btn-outline btn-sm" style="flex:1" onclick="printTeamsPoster()">Print</button></div></div></div></div></div></div><!-- ── SCHEDULE ── --><div class="page" id="page-schedule"><div class="prog-header"><h2>SCHEDULE</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="downloadSchedulePDF()">Download PDF</button><button class="btn btn-primary btn-sm" onclick="openScheduleModal()">+ Add</button></div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="form-input" id="schedSearch" placeholder="Search program or venue..." style="max-width:220px;padding:8px 12px" oninput="renderSchedule()"><select class="form-input" id="schedFilterStatus" onchange="renderSchedule()" style="max-width:170px;padding:8px 12px"><option value="all">All Status</option><option>Upcoming</option><option>Live Now</option><option>Completed</option><option>Postponed</option><option>Cancelled</option></select><select class="form-input" id="schedFilterDate" onchange="renderSchedule()" style="max-width:170px;padding:8px 12px"><option value="all">All Dates</option></select></div></div><div id="scheduleList"></div></div><!-- ── HOME PAGE ── --><div class="page" id="page-home"><div class="prog-header"><h2>HOME PAGE</h2><div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="saveHomePage()">Save</button><button class="btn btn-outline btn-sm" onclick="saveHomePage();previewPublicPage('home')">Preview</button></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><div class="card-title">EVENT INFO</div><div class="form-field" style="margin-bottom:8px"><label>EVENT NAME</label><input class="form-input" id="homeTitle" placeholder="Annual Arts Fest 2026"></div><div class="form-field" style="margin-bottom:8px"><label>TAGLINE</label><input class="form-input" id="homeTagline" placeholder="Celebrating Talent & Excellence"></div><div class="form-field" style="margin-bottom:8px"><label>DATE</label><input class="form-input" id="homeDate" type="date"></div><div class="form-field" style="margin-bottom:8px"><label>VENUE</label><input class="form-input" id="homeVenue" placeholder="e.g. City Auditorium"></div><div class="form-field" style="margin-bottom:0"><label>DESCRIPTION</label><textarea class="form-input" id="homeDesc" rows="3" placeholder="Brief description of the event..." style="resize:vertical"></textarea></div></div><div class="card"><div class="card-title">THEME</div><div class="form-field" style="margin-bottom:8px"><label>THEME STYLE</label><select class="form-input" id="homeThemeStyle" onchange="renderHomePreview()"><option value="gradient">Gradient (colour-based)</option><option value="dark">Dark Minimal</option><option value="nature">Nature Illustration</option><option value="vintage">Vintage Mic Illustration</option><option value="image">Custom Banner Image</option></select></div><div class="form-field" style="margin-bottom:8px" id="homeBannerUploadField"><label>CUSTOM BANNER IMAGE <span style="font-weight:400;color:var(--muted)">(used when style = Custom Banner)</span></label><input type="file" accept="image/*" id="homeBannerInput" onchange="uploadHomeBanner(this)" style="display:none"><button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:8px" onclick="document.getElementById('homeBannerInput').click()">Upload Image</button><div id="homeBannerPreview"></div></div><div class="form-field" style="margin-bottom:8px"><label>FONT PAIRING</label><select class="form-input" id="homeFontPair" onchange="renderHomePreview()"><option value="modern">Modern — Montserrat + Poppins</option><option value="elegant">Elegant — Playfair Display + Lora</option><option value="bold">Bold — Anton + Inter</option><option value="classic">Classic — Merriweather + Poppins</option><option value="playful">Playful — Fredoka + Nunito</option></select></div><div class="form-field" style="margin-bottom:8px"><label>HERO TEXT COLOUR</label><select class="form-input" id="homeTextMode" onchange="renderHomePreview()"><option value="light">Light text (for dark/photo backgrounds)</option><option value="dark">Dark text (for light backgrounds)</option></select></div><div class="form-field" style="margin-bottom:8px"><label>PRIMARY COLOR</label><input type="color" id="homePrimary" value="#2952E3" oninput="renderHomePreview()" style="height:40px;width:100%;border-radius:10px;border:1px solid rgba(255,255,255,.1);cursor:pointer"></div><div class="form-field" style="margin-bottom:0"><label>ACCENT COLOR</label><input type="color" id="homeAccent" value="#1B3AB0" oninput="renderHomePreview()" style="height:40px;width:100%;border-radius:10px;border:1px solid rgba(255,255,255,.1);cursor:pointer"></div></div><div class="card"><div class="card-title">ORGANIZER</div><div class="form-field" style="margin-bottom:8px"><label>INSTITUTION / CLUB</label><input class="form-input" id="homeOrg" placeholder="School / College / Club Name"></div><div class="form-field" style="margin-bottom:0"><label>CONTACT / WEBSITE</label><input class="form-input" id="homeContact" placeholder="contact@email.com or website URL"></div></div></div><div class="card" style="align-self:start"><div class="card-title">PREVIEW</div><div id="homePreviewBox" style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.07)"></div><div style="margin-top:10px;font-size:.72rem;color:var(--muted)">Save → Share link with participants</div></div></div></div><!-- ── ANNOUNCEMENTS ── --><div class="page" id="page-announcements"><div class="prog-header"><h2>ANNOUNCEMENTS</h2><button class="btn btn-primary btn-sm" onclick="openAnnModal()">+ New</button></div><div id="annList"></div></div><!-- ── LIVE RESULTS ── --><div class="page" id="page-liveresults"><div class="prog-header"><h2>LIVE RESULTS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="previewPublicPage('live')">Preview Public Page</button><button class="btn btn-primary btn-sm" onclick="calcResults();showToast('Live results updated!')">Refresh</button></div></div><div class="card" style="margin-bottom:14px"><div class="card-title">SETTINGS</div><div style="display:flex;flex-direction:column;gap:12px"><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="liveEnabled" style="accent-color:var(--accent);width:16px;height:16px" onchange="saveLiveSettings()"><div><div style="font-size:.85rem;font-weight:600">Enable Live Results</div><div style="font-size:.72rem;color:var(--muted)">Public page-ൽ results visible ആകും</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="liveShowScores" checked style="accent-color:var(--accent);width:16px;height:16px" onchange="saveLiveSettings()"><div><div style="font-size:.85rem;font-weight:600">Show Scores</div><div style="font-size:.72rem;color:var(--muted)">Individual scores public-ൽ കാണിക്കണോ</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="liveShowCategory" checked style="accent-color:var(--accent);width:16px;height:16px" onchange="saveLiveSettings()"><div><div style="font-size:.85rem;font-weight:600">Show Category Breakdown</div></div></label></div></div><div class="card" style="margin-bottom:14px"><div class="card-title">EVENT QR CODE</div><div id="eventQRBox"></div></div><div class="card"><div class="card-title">CURRENT LIVE STANDINGS</div><div id="liveResultsPreview"></div></div></div><!-- ── LEADERBOARD ── --><div class="page" id="page-leaderboard"><div class="prog-header"><h2>LEADERBOARD</h2><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="form-input" id="lbSearch" placeholder="Search team..." style="max-width:180px;padding:7px 12px" oninput="renderLeaderboard()"><select class="form-input" id="lbCatFilter" onchange="renderLeaderboard()" style="max-width:180px;padding:7px 12px"><option value="all">All Categories</option></select></div></div><div id="leaderboardContent"></div></div><!-- ── GALLERY ── --><div class="page" id="page-gallery"><div class="prog-header"><h2>GALLERY</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('galleryUpload').click()">+ Add Photos</button></div><input type="file" id="galleryUpload" accept="image/*" multiple style="display:none" onchange="addGalleryPhotos(this)"><div id="galleryGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div></div><!-- ── PUBLISH ── --><div class="page" id="page-publish"><div class="prog-header"><h2>PUBLISH</h2><div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Generate public HTML → Upload to GitHub</div></div><!-- Status card --><div class="card" style="margin-bottom:14px;border:1px solid rgba(0,229,122,.2);background:rgba(0,229,122,.05)"><div style="display:flex;align-items:center;gap:14px"><div style="flex:1"><div style="font-family:'Inter','Manjari',sans-serif;letter-spacing:2px;font-size:1rem;color:var(--green);margin-bottom:3px">HOW IT WORKS</div><div style="font-size:.78rem;color:var(--muted);line-height:1.6"><b style="color:var(--green)">പുതിയത്:</b> ഇനി HTML download ചെയ്യാതെ തന്നെ, താഴെ "GENERATE PUBLIC LINK" ഉപയോഗിച്ച് ഒരു live link ഉണ്ടാക്കി share ചെയ്യാം — score update ചെയ്യുമ്പോൾ automatic ആയി കാണിക്കും.<br><br>പഴയ HTML export രീതി (Gallery photos വേണമെങ്കിൽ ഇത് ഉപയോഗിക്കുക):<br>1. താഴെ options select ചെയ്യുക<br>2. "Generate & Download" click ചെയ്യുക — <b style="color:var(--text)">index.html</b>download ആകും<br>3. GitHub repo-ൽ ആ file upload ചെയ്യുക<br>4. GitHub Pages link share ചെയ്യുക — participants കാണും</div></div></div></div><!-- Sections to include --><div class="card" style="margin-bottom:14px"><div class="card-title">INCLUDE IN PUBLIC PAGE</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubHome" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Home Page</div><div style="font-size:.7rem;color:var(--muted)">Event info, banner</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubAnn" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Announcements</div><div style="font-size:.7rem;color:var(--muted)">Latest news</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubLive" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Live Results</div><div style="font-size:.7rem;color:var(--muted)">Team standings</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubLeader" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Leaderboard</div><div style="font-size:.7rem;color:var(--muted)">Category-wise</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubProgResults" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Program Results</div><div style="font-size:.7rem;color:var(--muted)">Participant name, chest no, category</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubSearch" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Chest No. Search</div><div style="font-size:.7rem;color:var(--muted)">Individual results lookup</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubCatLeaders" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Category Leaders</div><div style="font-size:.7rem;color:var(--muted)">Topper per category</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubLatestResults" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Latest Results</div><div style="font-size:.7rem;color:var(--muted)">Recently completed programs</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubGallery" onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Gallery</div><div style="font-size:.7rem;color:var(--muted)">Photos (large file)</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubScores" onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Show Scores</div><div style="font-size:.7rem;color:var(--muted)">Individual points</div></div></label><label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--dark3);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.06)"><input type="checkbox" id="pubSchedule" checked onchange="savePublishSettings()" style="accent-color:var(--accent);width:16px;height:16px"><div><div style="font-size:.85rem;font-weight:600">Schedule</div><div style="font-size:.7rem;color:var(--muted)">Program timetable</div></div></label></div></div><!-- GitHub link input --><div class="card" style="margin-bottom:14px"><div class="card-title">YOUR GITHUB PAGES URL (optional)</div><input class="form-input" id="pubGithubUrl" placeholder="e.g. https://yourusername.github.io/reponame" style="margin-bottom:0"><div style="font-size:.7rem;color:var(--muted);margin-top:6px">Save ചെയ്‌ത URL Dashboard-ൽ കാണിക്കും</div></div><div class="card" style="margin-bottom:14px"><div class="card-title">YOUTUBE LIVE STREAM LINK (optional)</div><input class="form-input" id="pubYoutubeLive" placeholder="e.g. https://youtube.com/watch?v=..." style="margin-bottom:0"><div style="font-size:.7rem;color:var(--muted);margin-top:6px">ഇത് കൊടുത്താൽ public site-ൽ ഒരു " Watch Live" button കാണിക്കും — ക്ലിക്ക് ചെയ്താൽ YouTube-ലേക്ക് പോകും</div></div><!-- Public Live Link --><div class="card" style="margin-bottom:14px;border:1px solid rgba(41,82,227,.25);background:rgba(41,82,227,.05)"><div class="card-title">PUBLIC LIVE LINK <span style="font-weight:400;color:var(--muted);font-size:.68rem">(auto-updates, no upload needed)</span></div><div style="font-size:.75rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Link generate ചെയ്ത് share ചെയ്യൂ — scores update ചെയ്യുമ്പോൾ ഈ link-ൽ automatic ആയി പുതിയത് കാണും. <b style="color:var(--text)">Note:</b> Gallery-യിൽ നിന്ന് ആദ്യത്തെ 5 ഫോട്ടോ മാത്രമേ (compressed ആയി) ഈ link-ൽ കാണൂ — എല്ലാ ഫോട്ടോയും വേണമെങ്കിൽ താഴെയുള്ള "Download" വഴി export ചെയ്യുക.</div><button class="btn btn-primary" style="width:100%;padding:12px;margin-bottom:10px" onclick="generatePublicLink()">🔗 GENERATE PUBLIC LINK</button><div id="publicLinkBox"></div></div><!-- Generate button --><button class="btn btn-primary" style="width:100%;padding:14px;font-size:1rem;background:linear-gradient(135deg,var(--green),#00B860);letter-spacing:2px" onclick="savePublishSettings();generatePublicHTML()">GENERATE &amp; DOWNLOAD index.html
         </button><!-- Instructions --><div class="card" style="margin-top:14px;background:rgba(41,82,227,.05);border:1px solid rgba(41,82,227,.15)"><div class="card-title">GITHUB UPLOAD STEPS</div><div style="counter-reset:steps">${['GitHub.com → Your repo → "Add file" → "Upload files"','Downloaded <b>index.html</b>select ചെയ്ത് drag & drop','Commit changes click ചെയ്യുക','Settings → Pages → Branch: main → Save','Link കിട്ടും: https://username.github.io/reponame'].map((s,i)=>`<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.8rem;color:var(--muted)"><span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:1px">${i+1}</span><span>${s}</span></div>`).join('')}
-          </div></div></div><!-- ── QR CARDS ── --><div class="page" id="page-qrcards"><div class="prog-header"><h2>QR CARDS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="downloadAllQRCards()">Download All</button></div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="form-input" id="qrSearch" placeholder="Search participant..." style="max-width:240px;padding:8px 12px" oninput="renderQRCards()"><span style="font-size:.72rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Scan QR → Mark attendance / view details</span></div></div><div id="qrEventNameBar" style="font-family:'Inter','Manjari',sans-serif;font-size:.95rem;letter-spacing:1px;color:var(--accent);margin-bottom:10px"></div><div id="qrCardsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px"></div></div><!-- ── ATTENDANCE ── --><div class="page" id="page-attendance"><div class="prog-header"><h2>ATTENDANCE</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="switchAttTab('scan')" id="attTabScan">Scan QR</button><button class="btn btn-outline btn-sm" onclick="switchAttTab('manual')" id="attTabManual">Manual</button><button class="btn btn-outline btn-sm" onclick="switchAttTab('report')" id="attTabReport">Report</button></div></div><!-- SCAN TAB --><div id="attScanSection"><div class="card" style="text-align:center"><div class="card-title">SCAN PARTICIPANT QR</div><div id="qrScannerBox" style="background:#000;border-radius:12px;overflow:hidden;max-width:340px;margin:0 auto 14px;aspect-ratio:1;display:flex;align-items:center;justify-content:center"><video id="qrVideo" style="width:100%;height:100%;object-fit:cover;display:none"></video><div id="qrScannerPlaceholder" style="color:#666;font-size:.85rem;padding:20px">Camera off</div></div><div style="display:flex;gap:8px;justify-content:center"><button class="btn btn-primary btn-sm" id="qrScanBtn" onclick="startQRScan()">Start Camera</button><button class="btn btn-red btn-sm" id="qrStopBtn" onclick="stopQRScan()" style="display:none">Stop</button></div><div id="qrScanResult" style="margin-top:14px"></div><div style="margin-top:10px;font-size:.68rem;color:var(--muted)">Camera പ്രവർത്തിക്കാൻ site HTTPS-ൽ ആയിരിക്കണം (GitHub Pages ✓), ഒപ്പം browser-ന് camera permission നൽകണം.</div></div></div><!-- MANUAL TAB --><div id="attManualSection" style="display:none"><div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="form-input" id="attManualSearch" placeholder="Search by name or chest no..." style="max-width:260px;padding:8px 12px" oninput="renderManualAttendance()"><select class="form-input" id="attManualFilter" onchange="renderManualAttendance()" style="max-width:160px;padding:8px 12px"><option value="all">All</option><option value="present">Present</option><option value="absent">Absent</option></select></div></div><div class="card"><div id="attManualList"></div></div></div><!-- REPORT TAB --><div id="attReportSection" style="display:none"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px"><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--green)" id="attTotalPresent">0</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">PRESENT</div></div><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--red)" id="attTotalAbsent">0</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">ABSENT</div></div><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--accent)" id="attTotalPct">0%</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">RATE</div></div></div><div class="card" style="margin-bottom:14px"><div class="card-title">TEAM-WISE ATTENDANCE</div><div id="attTeamReport"></div></div><div class="card"><div class="card-title">ABSENT LIST</div><div id="attAbsentList"></div></div></div></div><!-- ── AWARDS ── --><div class="page" id="page-awards"><div class="prog-header"><h2>AWARDS</h2><button class="btn btn-primary btn-sm" onclick="calcAwards()">Calculate Awards</button></div><div id="awardsContent"></div></div><!-- ── MARK ENTRY ── --><div class="page" id="page-markentry"><div class="prog-header"><h2>MARK ENTRY</h2><div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Judge Mark Entry System</div></div><!-- Program + Judge selector --><div class="card" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px"><div class="form-field" style="margin:0"><label>PROGRAM</label><select class="form-input" id="meProgSel" onchange="onMeProgChange()" style="padding:8px 12px"><option value="">— Select Program —</option></select></div><div class="form-field" style="margin:0"><label>JUDGE NAME</label><input class="form-input" id="meJudgeName" placeholder="Judge name..." style="padding:8px 12px" oninput="updateMeJudgeHeader()"></div></div><span id="mePublishedBadge" style="display:none;background:rgba(224,52,79,.08);border:1px solid rgba(224,52,79,.25);color:var(--red);font-size:.72rem;padding:6px 12px;border-radius:8px">Scores already submitted — editing will update live results</span><div id="meGroupNotice" style="display:none;background:rgba(41,82,227,.08);border:1px solid rgba(41,82,227,.25);color:var(--accent);font-size:.72rem;padding:8px 12px;border-radius:8px;margin-top:8px;line-height:1.5"></div></div><!-- Add row manually --><div class="card" id="meTableCard" style="display:none"><!-- Add new entry row --><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end"><div class="form-field" style="margin:0;flex:0 0 100px"><label>CHEST #</label><input class="form-input" id="meAddChest" placeholder="e.g. 101" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addMeRow()"></div><div class="form-field" style="margin:0;flex:0 0 80px"><label>CODE</label><input class="form-input" id="meAddCode" placeholder="A" style="padding:7px 10px;text-transform:uppercase" maxlength="4" onkeydown="if(event.key==='Enter')addMeRow()"></div><div class="form-field" style="margin:0;flex:1;min-width:120px"><label>MARK</label><input class="form-input" id="meAddMark" type="number" placeholder="0" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addMeRow()"></div><button class="btn btn-primary btn-sm" style="flex-shrink:0;height:38px" onclick="addMeRow()">+ Add</button></div><!-- Entries table --><div style="overflow-x:auto"><table class="lb-table" style="width:100%"><thead><tr><th>CHEST #</th><th>CODE</th><th>PARTICIPANT</th><th id="meJudgeHeader">MARKS</th><th></th></tr></thead><tbody id="meTableBody"></tbody></table></div><div id="meSortBtns" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="meSortBy('code')" id="meSortCode">Sort by Code</button><button class="btn btn-outline btn-sm" onclick="meSortBy('marks')" id="meSortMarks">Sort by Marks</button><button class="btn btn-outline btn-sm" onclick="clearMeMarks()">Clear All</button><div style="flex:1"></div><button class="btn btn-primary" onclick="submitMeMarks()">Submit Marks →</button></div></div><div id="meEmptyState" class="empty-state"><p>Select a program above to start entering marks</p></div></div><!-- ── JUDGE PANEL ── --><div class="page" id="page-judgepanel"><div class="prog-header"><h2>JUDGE PANEL</h2><div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Add judges below — they log in with just their name from the main Login screen (Judge Login)</div></div><div id="jpManageTab"><div class="card" style="margin-bottom:14px"><div style="font-size:.85rem;font-weight:700;margin-bottom:10px">+ Add New Judge</div><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px"><div class="form-field" style="margin:0;flex:1;min-width:160px"><label>JUDGE NAME</label><input class="form-input" id="jpNewName" placeholder="Judge name" style="padding:8px 12px" onkeydown="if(event.key==='Enter')addJpJudge()"></div><button class="btn btn-primary btn-sm" style="height:38px" onclick="addJpJudge()">+ Add Judge</button></div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">ASSIGN PROGRAMS</label><div id="jpNewProgChecks" style="display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow-y:auto;padding:8px;background:var(--dark3);border-radius:8px"></div></div><div id="jpJudgeList"></div><div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:.85rem;font-weight:700">Submission History</div><button class="btn btn-outline btn-xs" onclick="clearJpHistory()">Clear</button></div><div id="jpHistoryList"></div></div></div></div><!-- ── ANALYTICS ── --><div class="page" id="page-analytics"><div class="prog-header"><h2>ANALYTICS</h2><button class="btn btn-primary btn-sm" onclick="renderAnalytics()">Refresh</button></div><div id="analyticsContent"></div></div><!-- ── HISTORY ── --><div class="page" id="page-history"><div class="prog-header"><h2>HISTORY</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="clearHistory()">Clear Log</button><button class="btn btn-red btn-sm" onclick="clearData('scores')">Reset All Scores</button></div></div><div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;line-height:1.6">ഇത് ഒരു <b>viewing log</b> മാത്രമാണ് — "Clear Log" ഇത് മാത്രമേ ഒഴിവാക്കൂ, actual points/scores മാറില്ല. Teams-ന്റെ points/marks പൂർണമായി reset ചെയ്യാൻ <b>"Reset All Scores"</b> ഉപയോഗിക്കുക.</div><div class="card"><div id="histContent"></div></div></div>      <!-- ── HOW TO USE / HELP ── -->
+          </div></div></div><!-- ── QR CARDS ── --><div class="page" id="page-qrcards"><div class="prog-header"><h2>QR CARDS</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="downloadAllQRCards()">Download All</button></div></div><div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="form-input" id="qrSearch" placeholder="Search participant..." style="max-width:240px;padding:8px 12px" oninput="renderQRCards()"><span style="font-size:.72rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Scan QR → participant details, programs &amp; status (Attendance scanner also marks presence)</span></div><div id="qrLinkNote" style="font-size:.7rem;color:var(--muted);margin-top:8px;word-break:break-all"></div></div><div id="qrEventNameBar" style="font-family:'Inter','Manjari',sans-serif;font-size:.95rem;letter-spacing:1px;color:var(--accent);margin-bottom:10px"></div><div id="qrCardsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px"></div></div><!-- ── ATTENDANCE ── --><div class="page" id="page-attendance"><div class="prog-header"><h2>ATTENDANCE</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="switchAttTab('scan')" id="attTabScan">Scan QR</button><button class="btn btn-outline btn-sm" onclick="switchAttTab('manual')" id="attTabManual">Manual</button><button class="btn btn-outline btn-sm" onclick="switchAttTab('report')" id="attTabReport">Report</button></div></div><!-- SCAN TAB --><div id="attScanSection"><div class="card" style="text-align:center"><div class="card-title">SCAN PARTICIPANT QR</div><div id="qrScannerBox" style="background:#000;border-radius:12px;overflow:hidden;max-width:340px;margin:0 auto 14px;aspect-ratio:1;display:flex;align-items:center;justify-content:center"><video id="qrVideo" style="width:100%;height:100%;object-fit:cover;display:none"></video><div id="qrScannerPlaceholder" style="color:#666;font-size:.85rem;padding:20px">Camera off</div></div><div style="display:flex;gap:8px;justify-content:center"><button class="btn btn-primary btn-sm" id="qrScanBtn" onclick="startQRScan()">Start Camera</button><button class="btn btn-red btn-sm" id="qrStopBtn" onclick="stopQRScan()" style="display:none">Stop</button></div><div id="qrScanResult" style="margin-top:14px"></div><div style="margin-top:10px;font-size:.68rem;color:var(--muted)">Camera പ്രവർത്തിക്കാൻ site HTTPS-ൽ ആയിരിക്കണം (GitHub Pages ✓), ഒപ്പം browser-ന് camera permission നൽകണം.</div></div></div><!-- MANUAL TAB --><div id="attManualSection" style="display:none"><div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="form-input" id="attManualSearch" placeholder="Search by name or chest no..." style="max-width:260px;padding:8px 12px" oninput="renderManualAttendance()"><select class="form-input" id="attManualFilter" onchange="renderManualAttendance()" style="max-width:160px;padding:8px 12px"><option value="all">All</option><option value="present">Present</option><option value="absent">Absent</option></select></div></div><div class="card"><div id="attManualList"></div></div></div><!-- REPORT TAB --><div id="attReportSection" style="display:none"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px"><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--green)" id="attTotalPresent">0</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">PRESENT</div></div><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--red)" id="attTotalAbsent">0</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">ABSENT</div></div><div class="card" style="text-align:center;padding:14px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.8rem;color:var(--accent)" id="attTotalPct">0%</div><div style="font-size:.65rem;color:var(--muted);letter-spacing:1px">RATE</div></div></div><div class="card" style="margin-bottom:14px"><div class="card-title">TEAM-WISE ATTENDANCE</div><div id="attTeamReport"></div></div><div class="card"><div class="card-title">ABSENT LIST</div><div id="attAbsentList"></div></div></div></div><!-- ── AWARDS ── --><div class="page" id="page-awards"><div class="prog-header"><h2>AWARDS</h2><button class="btn btn-primary btn-sm" onclick="calcAwards()">Calculate Awards</button></div><div id="awardsContent"></div></div><!-- ── MARK ENTRY ── --><div class="page" id="page-markentry"><div class="prog-header"><h2>MARK ENTRY</h2><div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Judge Mark Entry System</div></div><!-- Program + Judge selector --><div class="card" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px"><div class="form-field" style="margin:0"><label>PROGRAM</label><select class="form-input" id="meProgSel" onchange="onMeProgChange()" style="padding:8px 12px"><option value="">— Select Program —</option></select></div><div class="form-field" style="margin:0"><label>JUDGE NAME</label><input class="form-input" id="meJudgeName" placeholder="Judge name..." style="padding:8px 12px" oninput="updateMeJudgeHeader()"></div></div><span id="mePublishedBadge" style="display:none;background:rgba(224,52,79,.08);border:1px solid rgba(224,52,79,.25);color:var(--red);font-size:.72rem;padding:6px 12px;border-radius:8px">Scores already submitted — editing will update live results</span><div id="meGroupNotice" style="display:none;background:rgba(41,82,227,.08);border:1px solid rgba(41,82,227,.25);color:var(--accent);font-size:.72rem;padding:8px 12px;border-radius:8px;margin-top:8px;line-height:1.5"></div></div><!-- Add row manually --><div class="card" id="meTableCard" style="display:none"><!-- Add new entry row --><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end"><div class="form-field" style="margin:0;flex:0 0 100px"><label>CHEST #</label><input class="form-input" id="meAddChest" placeholder="e.g. 101" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addMeRow()"></div><div class="form-field" style="margin:0;flex:0 0 80px"><label>CODE</label><input class="form-input" id="meAddCode" placeholder="A" style="padding:7px 10px;text-transform:uppercase" maxlength="4" onkeydown="if(event.key==='Enter')addMeRow()"></div><div class="form-field" style="margin:0;flex:1;min-width:120px"><label>MARK</label><input class="form-input" id="meAddMark" type="number" placeholder="0" style="padding:7px 10px" onkeydown="if(event.key==='Enter')addMeRow()"></div><button class="btn btn-primary btn-sm" style="flex-shrink:0;height:38px" onclick="addMeRow()">+ Add</button></div><!-- Entries table --><div style="overflow-x:auto"><table class="lb-table" style="width:100%"><thead><tr><th>CHEST #</th><th>CODE</th><th>PARTICIPANT</th><th id="meJudgeHeader">MARKS</th><th></th></tr></thead><tbody id="meTableBody"></tbody></table></div><div id="meSortBtns" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="meSortBy('code')" id="meSortCode">Sort by Code</button><button class="btn btn-outline btn-sm" onclick="meSortBy('marks')" id="meSortMarks">Sort by Marks</button><button class="btn btn-outline btn-sm" onclick="clearMeMarks()">Clear All</button><div style="flex:1"></div><button class="btn btn-primary" onclick="submitMeMarks()">Submit Marks →</button></div></div><div id="meEmptyState" class="empty-state"><p>Select a program above to start entering marks</p></div></div><!-- ── JUDGE PANEL ── --><div class="page" id="page-judgepanel"><div class="prog-header"><h2>JUDGE PANEL</h2><div style="font-size:.75rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif">Add judges below — they log in with just their name from the main Login screen (Judge Login)</div></div><div id="jpManageTab"><div class="card" style="margin-bottom:14px"><div style="font-size:.85rem;font-weight:700;margin-bottom:10px">+ Add New Judge</div><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px"><div class="form-field" style="margin:0;flex:1;min-width:160px"><label>JUDGE NAME</label><input class="form-input" id="jpNewName" placeholder="Judge name" style="padding:8px 12px" onkeydown="if(event.key==='Enter')addJpJudge()"></div><button class="btn btn-primary btn-sm" style="height:38px" onclick="addJpJudge()">+ Add Judge</button></div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">ASSIGN PROGRAMS</label><div id="jpNewProgChecks" style="display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow-y:auto;padding:8px;background:var(--dark3);border-radius:8px"></div></div><div id="jpJudgeList"></div><div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:.85rem;font-weight:700">Submission History</div><button class="btn btn-outline btn-xs" onclick="clearJpHistory()">Clear</button></div><div id="jpHistoryList"></div></div></div></div><!-- ── ANALYTICS ── --><div class="page" id="page-analytics"><div class="prog-header"><h2>ANALYTICS</h2><button class="btn btn-primary btn-sm" onclick="renderAnalytics()">Refresh</button></div><div id="analyticsContent"></div></div><!-- ── HISTORY ── --><div class="page" id="page-history"><div class="prog-header"><h2>HISTORY</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" onclick="clearHistory()">Clear Log</button><button class="btn btn-red btn-sm" onclick="clearData('scores')">Reset All Scores</button></div></div><div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;line-height:1.6">ഇത് ഒരു <b>viewing log</b> മാത്രമാണ് — "Clear Log" ഇത് മാത്രമേ ഒഴിവാക്കൂ, actual points/scores മാറില്ല. Teams-ന്റെ points/marks പൂർണമായി reset ചെയ്യാൻ <b>"Reset All Scores"</b> ഉപയോഗിക്കുക.</div><div class="card"><div id="histContent"></div></div></div>      <!-- ── HOW TO USE / HELP ── -->
       <div class="page" id="page-help">
         <div class="prog-header"><h2>❓ എങ്ങനെ ഉപയോഗിക്കാം</h2></div>
 
@@ -3298,6 +3298,7 @@ function applyPublicSnapshotToGlobals(raw){
   try { if (raw.pr_poster_logo) posterLogo = JSON.parse(raw.pr_poster_logo); } catch(e){}
   try { if (raw.pr_home_banner) homeBanner = JSON.parse(raw.pr_home_banner); } catch(e){}
   try { partPhotos = raw.pr_part_photos ? JSON.parse(raw.pr_part_photos) : {}; } catch(e){ partPhotos = {}; }
+  try { attendance = raw.pr_attendance ? JSON.parse(raw.pr_attendance) : {}; } catch(e){ attendance = {}; }
   try { if (raw.pr_poster_custom_bg) posterCustomBg = JSON.parse(raw.pr_poster_custom_bg); } catch(e){}
   try { if (raw.pr_poster_bg_choice) posterBgChoice = JSON.parse(raw.pr_poster_bg_choice); } catch(e){}
   try { if (raw.pr_poster_tpl) posterTplOpts = JSON.parse(raw.pr_poster_tpl); } catch(e){}
@@ -3356,7 +3357,8 @@ async function initPublicLinkViewer(rawKey){
   applyPublicSnapshotToGlobals({ ...mainRaw, ...assetsRaw });
   let settings = publishSettings;
   try { if (mainRaw.pr_publish_settings) settings = JSON.parse(mainRaw.pr_publish_settings); } catch(e){}
-  const html = generatePublicHTML(settings, true);
+  const wantP = new URLSearchParams(location.search).get('p');
+  const html = wantP ? generateParticipantHTML(wantP, settings) : generatePublicHTML(settings, true);
   const frame = document.getElementById('publicLiveFrame');
   hidePublicLinkLoading();
   frame.style.display = 'block';
@@ -3366,6 +3368,67 @@ async function initPublicLinkViewer(rawKey){
 
   onSnapshot(ref, (snap) => { mainSeen = true; mainRaw = snap.exists() ? snap.data() : null; renderCombined(); }, (err) => { console.warn('Public link listener failed:', err.message); showPublicLinkError(); });
   onSnapshot(assetsRef, (snap) => { assetsRaw = snap.exists() ? snap.data() : {}; renderCombined(); }, (err) => console.warn('Public link assets listener failed:', err.message));
+}
+
+// ── Participant page shown when a participant's QR is scanned (?live=KEY&p=ID) ──
+function generateParticipantHTML(pid, s) {
+  s = s || {};
+  const p = parts.find(x => String(x.id) === String(pid));
+  const baseUrl = location.origin + location.pathname + location.search.replace(/[?&]p=[^&]*/,'').replace(/^&/,'?');
+  const evName = (homeData && homeData.title) ? homeData.title : 'FestQ';
+  const css = `*{box-sizing:border-box}body{margin:0;font-family:'Inter','Manjari',system-ui,sans-serif;background:#F2F5FF;color:#0E1A3D;padding:16px}
+  .w{max-width:460px;margin:0 auto}.ev{font-size:.72rem;font-weight:600;color:#2952E3;text-align:center;margin:4px 0 12px}
+  .card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(41,82,227,.10);margin-bottom:14px}
+  .top{display:flex;gap:14px;align-items:center}.av{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#E8EDFF;color:#2952E3;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.9rem;flex-shrink:0}
+  h1{font-size:1.2rem;margin:0 0 4px}.m{font-size:.8rem;color:#5B6685}.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:99px;margin-top:8px;background:#E8EDFF;color:#2952E3}
+  .ok{background:#DDF6E8;color:#0E8A4B}.no{background:#EEF0F6;color:#5B6685}
+  h2{font-size:.78rem;color:#5B6685;letter-spacing:.04em;margin:0 0 10px;font-weight:700}
+  .pr{padding:12px 0;border-top:1px solid #E4E9F6}.pr:first-of-type{border-top:0}.pn{font-weight:700;font-size:.92rem}
+  .st{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block;margin-top:6px;margin-right:4px}
+  .live{background:#FFE3E3;color:#C62828}.up{background:#E8EDFF;color:#2952E3}.done{background:#DDF6E8;color:#0E8A4B}.warn{background:#FFF1D6;color:#9A6200}
+  a.b{display:block;text-align:center;background:#2952E3;color:#fff;text-decoration:none;font-weight:600;padding:13px;border-radius:12px;margin-top:6px}
+  .ft{text-align:center;font-size:.68rem;color:#8A93B2;margin:16px 0 4px}`;
+  const shell = body => `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css}</style></head><body><div class="w"><div class="ev">${esc(evName)}</div>${body}<div class="ft">FestQ · Dezign Hub</div></div></body></html>`;
+  if (!p) return shell(`<div class="card" style="text-align:center"><h1>Participant not found</h1><div class="m" style="margin-top:6px">This QR code is not valid or the participant was removed.</div></div><a class="b" target="_top" href="${esc(baseUrl)}">View live results</a>`);
+
+  const cat = cats.find(c => c.id === p.catId);
+  const att = attendance[p.id];
+  const rg = regs.filter(r => String(r.partId) === String(p.id));
+  const teamNames = [...new Set(rg.map(r => (teams.find(t => t.id === r.teamId) || {}).name).filter(Boolean))];
+  const photo = partPhotos[p.id];
+  const showRes = s.incProgResults !== false;
+  const showScore = !!s.incScores;
+  const rows = rg.map(r => {
+    const pr = progs.find(x => String(x.id) === String(r.progId));
+    if (!pr) return '';
+    const pc = cats.find(c => c.id === pr.catId);
+    const sc = schedule.find(e => String(e.name).trim().toLowerCase() === String(pr.name).trim().toLowerCase());
+    let tags = '';
+    if (sc) {
+      const cls = sc.status === 'Live Now' ? 'live' : sc.status === 'Completed' ? 'done' : (sc.status === 'Postponed' || sc.status === 'Cancelled') ? 'warn' : 'up';
+      tags += `<span class="st ${cls}">${esc(sc.status || 'Upcoming')}</span>`;
+    } else tags += `<span class="st up">Registered</span>`;
+    let when = '';
+    if (sc) when = `<div class="m" style="margin-top:6px">📅 ${esc(sc.date || '')}${sc.start ? ' · ' + esc(sc.start) + (sc.end ? '–' + esc(sc.end) : '') : ''}${sc.venue ? ' · 📍 ' + esc(sc.venue) : ''}</div>`;
+    if (showRes) {
+      const ent = [];
+      teams.forEach(t => (t.members || []).filter(m => String(m.pid) === String(pr.id)).forEach(m => ent.push({ name: m.name, score: Number(m.score) || 0 })));
+      ent.sort((a, b) => b.score - a.score);
+      const idx = ent.findIndex(e => e.name === p.name);
+      if (idx >= 0) tags += `<span class="st done">Result: ${['🥇 1st','🥈 2nd','🥉 3rd'][idx] || (idx + 1) + 'th'}${showScore ? ' · ' + ent[idx].score + ' pts' : ''}</span>`;
+      else if (ent.length) tags += `<span class="st warn">Not placed</span>`;
+      else tags += `<span class="st no" style="background:#EEF0F6;color:#5B6685">Awaiting result</span>`;
+    }
+    return `<div class="pr"><div class="pn">${esc(pr.name)}${pc ? ' <span class="m" style="font-weight:400">· ' + esc(pc.name) + '</span>' : ''}</div>${tags}${when}</div>`;
+  }).join('');
+
+  const body = `<div class="card"><div class="top">${photo ? `<img class="av" src="${photo}" alt="">` : `<div class="av">${esc((p.name || '?').trim().charAt(0).toUpperCase())}</div>`}
+    <div><h1>${esc(p.name)}</h1><div class="m">Chest No: <b>${esc(p.chest)}</b>${cat ? ' · ' + esc(cat.name) : ''}${p.group ? ' · ' + esc(p.group) : ''}</div>
+    ${teamNames.length ? `<div class="m">Team: ${esc(teamNames.join(', '))}</div>` : ''}
+    <span class="chip ${att && att.present ? 'ok' : 'no'}">${att && att.present ? '✓ Checked in' : 'Not checked in yet'}</span></div></div></div>
+    <div class="card"><h2>PROGRAMS (${rg.length})</h2>${rows || '<div class="m">No programs registered yet.</div>'}</div>
+    <a class="b" target="_top" href="${esc(baseUrl)}">View live results</a>`;
+  return shell(body);
 }
 
 function generatePublicHTML(overrideSettings, returnOnly) {
@@ -4134,6 +4197,11 @@ function generatePublicHTML(overrideSettings, returnOnly) {
 // ═══ QR CARDS ═══
 let attendance = ld('pr_attendance', {}); // {partId: {present: true, time: ...}}
 
+function qrPayload(p) {
+  const base = (typeof publicLinkUrl === 'function') ? publicLinkUrl() : '';
+  if (base && /^https?:/i.test(base)) return base + '&p=' + encodeURIComponent(p.id);
+  return JSON.stringify({id:p.id, name:p.name, chest:p.chest});
+}
 function qrUrl(data, size=200) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}`;
 }
@@ -4141,6 +4209,11 @@ function qrUrl(data, size=200) {
 function renderQRCards() {
   const grid = document.getElementById('qrCardsGrid');
   if (!grid) return;
+  const note = document.getElementById('qrLinkNote');
+  if (note) {
+    const b = (typeof publicLinkUrl === 'function') ? publicLinkUrl() : '';
+    note.innerHTML = (b && /^https?:/i.test(b)) ? 'QR opens: ' + esc(b) + '&amp;p=…  — works only if this app is hosted online at that address.' : '<span style="color:var(--red)">Public link unavailable (login online / host the file) — QR will fall back to the old attendance-only format.</span>';
+  }
   const nameBar = document.getElementById('qrEventNameBar');
   if (nameBar) nameBar.textContent = (homeData && homeData.title) ? homeData.title : '';
   const search = (document.getElementById('qrSearch')?.value || '').toLowerCase();
@@ -4151,7 +4224,7 @@ function renderQRCards() {
   }
   grid.innerHTML = list.map(p => {
   const cat = cats.find(c =>c.id === p.catId);
-  const qrData = JSON.stringify({id:p.id, name:p.name, chest:p.chest});
+  const qrData = qrPayload(p);
   const isPresent = attendance[p.id]?.present;
   const myProgs = regs.filter(r => r.partId === p.id).map(r => progs.find(x => x.id == r.progId)).filter(Boolean);
   return `<div style="background:var(--dark3);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;text-align:center" id="qrcard-${p.id}"><div style="padding:14px 14px 8px"><img src="${qrUrl(qrData, 180)}" style="width:140px;height:140px;border-radius:8px;background:#fff;padding:6px" loading="lazy"></div><div style="padding:0 12px 12px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:1rem;letter-spacing:1px;color:var(--text)">${esc(p.name)}</div><div style="font-family:'Inter','Manjari',sans-serif;font-size:.72rem;color:var(--gold);margin-top:2px">#${esc(p.chest)}</div>${cat ? `<div style="font-size:.68rem;color:var(--muted);margin-top:2px">${esc(cat.name)}${(()=>{const tm=teams.find(t=>t.id==p.group);return tm?' · '+esc(tm.name):'';})()}</div>` : ''}
@@ -4162,7 +4235,7 @@ function renderQRCards() {
 
 function buildQRCardHTML(p) {
   const cat = cats.find(c =>c.id === p.catId);
-  const qrData = JSON.stringify({id:p.id, name:p.name, chest:p.chest});
+  const qrData = qrPayload(p);
   const eventName = (homeData && homeData.title) ? homeData.title : 'FestQ';
   const myProgs = regs.filter(r => r.partId === p.id).map(r => progs.find(x => x.id == r.progId)).filter(Boolean);
   return `<div style="position:relative;box-sizing:border-box;width:713px;height:1125px;background:linear-gradient(135deg,#1a1a2e,#0d0d1a);border-radius:32px;overflow:hidden;font-family:'Inter',sans-serif;box-shadow:0 20px 80px rgba(0,0,0,.3)"><div style="background:linear-gradient(135deg,#2952E3,#2952E366);padding:34px 24px;text-align:center"><div style="font-family:'Inter','Manjari',sans-serif;font-size:2.05rem;font-weight:700;letter-spacing:1.5px;color:#fff;line-height:1.3">${esc(eventName)}</div><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.05rem;letter-spacing:5px;color:rgba(255,255,255,.75);margin-top:8px">PARTICIPANT ID</div></div><div style="padding:44px 48px 0;text-align:center"><img src="${qrUrl(qrData, 460)}" crossorigin="anonymous" style="width:420px;height:420px;border-radius:18px;background:#fff;padding:16px"><div style="font-family:'Inter','Manjari',sans-serif;font-size:2.55rem;font-weight:700;letter-spacing:1px;color:#fff;margin-top:30px">${esc(p.name)}</div><div style="font-family:'Inter','Manjari',sans-serif;font-size:1.5rem;color:#4a9ae8;margin-top:8px">CHEST NO: ${esc(p.chest)}</div>${cat ? `<div style="font-size:1.35rem;color:#aaa;margin-top:12px">${esc(cat.name)}${(()=>{const tm=teams.find(t=>t.id==p.group);return tm?' · '+esc(tm.name):'';})()}</div>` : ''}
@@ -4332,10 +4405,13 @@ function stopQRScan() {
 }
 
 function handleQRScanResult(data) {
-  let parsed;
-  try { parsed = JSON.parse(data); } catch(e) { return; }
-  if (!parsed.id) return;
-  const p = parts.find(x =>x.id === parsed.id);
+  let parsed = null;
+  try { parsed = JSON.parse(data); } catch(e) {}
+  if (!parsed || !parsed.id) {
+    try { const pid = new URL(String(data)).searchParams.get('p'); if (pid) parsed = { id: pid }; } catch(e) {}
+  }
+  if (!parsed || !parsed.id) return;
+  const p = parts.find(x => String(x.id) === String(parsed.id));
   if (!p) {
   document.getElementById('qrScanResult').innerHTML = `<div style="color:var(--red);font-size:.85rem">Unknown QR code</div>`;
   return;
@@ -5384,14 +5460,31 @@ if ('serviceWorker' in navigator) {
 }
 
 // ═══ FESTQ AI ASSISTANT ═══
+function aiIsAdmin(){return typeof curUser!=='undefined'&&curUser&&(curUser.username==='admin'||curUser.isAdmin===true)}
+function aiEnsureAdminChip(){
+  const q=document.getElementById('aiQuick');if(!q)return;
+  const has=q.querySelector('[data-admin]');
+  if(aiIsAdmin()&&!has){
+    const c=document.createElement('span');
+    c.className='ai-chip';c.setAttribute('data-admin','1');
+    c.setAttribute('data-q','ഇന്നത്തെ schedule തയ്യാറാക്കൂ');
+    c.textContent='ഇന്നത്തെ schedule തയ്യാറാക്കൂ';
+    c.addEventListener('click',()=>aiSend(c.getAttribute('data-q')));
+    q.appendChild(c);
+  }else if(!aiIsAdmin()&&has){has.remove()}
+}
 function toggleAI(){
   const p=document.getElementById('aiPanel');
   p.classList.toggle('open');
-  if(p.classList.contains('open') && !document.getElementById('aiBody').dataset.greeted){
-    aiAppendMsg('bot','Hi! I can check today\'s schedule, team points, live results and more — tap a quick option below or type your question in Malayalam or English.');
-    document.getElementById('aiBody').dataset.greeted='1';
+  if(p.classList.contains('open')){
+    aiEnsureAdminChip();
+    const b=document.getElementById('aiBody');
+    if(!b.dataset.greeted){
+      aiAppendMsg('bot','Hi! Ask me in Malayalam or English, for example:<br>• ഇന്ന് എന്തൊക്കെ programs ഉണ്ട്?<br>• Team A എത്ര points?<br>• Next program ഏതാണ്?<br>• Stage Speech result കാണിക്കൂ<br>• Find a participant by name or chest number<br><span style="opacity:.7">Or tap a quick option below.</span>');
+      b.dataset.greeted='1';
+    }
+    document.getElementById('aiInput').focus();
   }
-  if(p.classList.contains('open')) document.getElementById('aiInput').focus();
 }
 function aiAppendMsg(role,html){
   const b=document.getElementById('aiBody');
@@ -5408,58 +5501,277 @@ function aiSend(preset){
   if(!text) return;
   aiAppendMsg('user',esc(text));
   if(preset===undefined) inp.value='';
-  setTimeout(()=>{aiAppendMsg('bot',festAIReply(text))},280);
+  setTimeout(()=>{
+    let r;
+    try{r=festAIReply(text)}catch(e){console.error(e);r=aiIsML(text)?'ക്ഷമിക്കണം, ഒരു പിശക് സംഭവിച്ചു. ഒന്നുകൂടി ശ്രമിക്കൂ.':'Sorry, something went wrong. Please try again.'}
+    aiAppendMsg('bot',r);
+  },280);
 }
 document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.ai-chip').forEach(c=>c.addEventListener('click',()=>aiSend(c.getAttribute('data-q'))));
 });
-function festAIReply(qRaw){
-  const q=qRaw.toLowerCase();
-  const ml=aiIsML(qRaw);
-  const today=new Date().toISOString().slice(0,10);
-  const nowT=new Date().toTimeString().slice(0,5);
-  const foundTeam=teams.find(t=>qRaw.toLowerCase().includes((t.name||'').toLowerCase()));
 
-  if(/today|ഇന്ന്/.test(qRaw)||/today/.test(q)){
-    const todays=schedule.filter(e=>e.date===today).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
-    if(!todays.length) return ml?'ഇന്ന് ഷെഡ്യൂൾ ചെയ്ത പ്രോഗ്രാമുകൾ ഒന്നും ഇല്ല.':'No programs are scheduled for today.';
-    const lines=todays.map(e=>'• '+(e.start||'--:--')+' — <b>'+esc(e.name)+'</b>'+(e.venue?' ('+esc(e.venue)+')':'')).join('<br>');
-    return (ml?'ഇന്നത്തെ ഷെഡ്യൂൾ:<br>':"Today's schedule:<br>")+lines;
-  }
-  if(foundTeam||/team|points|ടീം|പോയിന്റ്/.test(q)){
-    if(foundTeam){
-      return (ml?(esc(foundTeam.name)+' ന്റെ ആകെ പോയിന്റ്: '):(esc(foundTeam.name)+"'s total points: "))+'<b>'+teamTotal(foundTeam)+'</b>';
+// ── helpers ──
+const AI_STOP=new Set(('show check find search tell give get me my the a an of for in on is are was what which who whom whose how many much any all please result results live program programs participant participants competition competitions point points score scores team teams next schedule today tomorrow now list details detail info about with and or to and hi hello '
+ +'കാണിക്കൂ കാണിക്കുക എത്ര ഏതാണ് ഏത് ഏതൊക്കെ എന്തൊക്കെ എന്താണ് ഉണ്ട് ആരാണ് ആരാ ആര് വേണം തരൂ തരുക പറയൂ').split(' '));
+const AI_ML_STEMS=['കാണിക്ക','എന്ത','ഉണ്ട','ഇന്ന','നാളെ','ടീം','പ്രോഗ്രാം','പോയിന്റ','റിസൽ','റിസൾ','കണ്ടെത്ത','തിരയ','പങ്കാളി','ഷെഡ്യൂ','തയ്യാറാക്ക','അടുത്ത','ഉള്ള','പറയ'];
+function aiToday(off){const d=new Date();d.setDate(d.getDate()+(off||0));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function aiNorm(s){return String(s==null?'':s).toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
+function aiHas(hay,needle){return !!needle&&(' '+hay+' ').indexOf(' '+needle+' ')>=0}
+function aiKeyTokens(qn){
+  return qn.split(' ').filter(t=>t&&(t.length>=2||/^\d+$/.test(t))&&!AI_STOP.has(t)&&!AI_ML_STEMS.some(s=>t.startsWith(s)));
+}
+function aiFindProgs(qn){
+  const qt=qn.split(' ');
+  let best=0,hits=[];
+  progs.forEach(p=>{
+    const n=aiNorm(p.name);if(!n)return;
+    let sc=0;
+    if(aiHas(qn,n))sc=100+n.length;
+    else{
+      const toks=n.split(' ').filter(t=>t.length>=3&&!AI_STOP.has(t));
+      if(toks.length&&toks.every(t=>qt.some(q=>q===t||q.startsWith(t))))sc=toks.length*10;
     }
-    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a));
-    const lines=ranked.map((t,i)=>(i+1)+'. <b>'+esc(t.name)+'</b> — '+teamTotal(t)+' pts').join('<br>');
-    return (ml?'നിലവിലെ ടീം സ്റ്റാൻഡിംഗ്:<br>':'Current team standings:<br>')+lines;
-  }
-  if(/live|result|ലൈവ്|റിസൽട്ട്/.test(q)){
-    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a)).slice(0,3);
-    if(!ranked.some(t=>teamTotal(t)>0)) return ml?'ഇതുവരെ സ്കോർ എന്റ്രി ചെയ്തിട്ടില്ല.':'No scores have been entered yet.';
+    if(sc>best){best=sc;hits=[p]}else if(sc&&sc===best)hits.push(p);
+  });
+  return hits;
+}
+function aiProgEntries(pr){
+  const out=[];
+  teams.forEach(t=>getMProg(pr.id,t.id).forEach(m=>{
+    const part=parts.find(p=>p.name===m.name);
+    out.push({name:m.name,chest:part?part.chest:'',team:t.name,score:Number(m.score)||0});
+  }));
+  return out.sort((a,b)=>b.score-a.score);
+}
+function aiProgCard(pr,ml){
+  const cat=cats.find(c=>c.id===pr.catId);
+  const ent=aiProgEntries(pr);
+  const reg=regs.filter(r=>r.progId===pr.id).length;
+  let h='🏆 <b>'+esc(pr.name)+'</b>'+(cat?' · '+esc(cat.name):'');
+  if(!ent.length){
+    h+='<br>'+(ml?'ഫലം ഇതുവരെ എന്റർ ചെയ്തിട്ടില്ല.':'No results entered yet.')+' ('+reg+(ml?' രജിസ്ട്രേഷൻ)':' registered)');
+  }else{
     const medals=['🥇','🥈','🥉'];
-    const lines=ranked.map((t,i)=>(medals[i]||'')+' <b>'+esc(t.name)+'</b> — '+teamTotal(t)+' pts').join('<br>');
-    setTimeout(()=>showPage('liveresults'),500);
-    return (ml?'ലൈവ് റിസൽട്ട്‌സ് തുറക്കുന്നു...<br>':'Opening Live Results…<br>')+lines;
+    h+='<br>'+ent.slice(0,5).map((e,i)=>(medals[i]||(i+1)+'.')+' <b>'+esc(e.name)+'</b>'+(e.chest?' #'+esc(e.chest):'')+' — '+esc(e.team)+' · '+e.score).join('<br>');
+    if(ent.length>5)h+='<br>… +'+(ent.length-5)+(ml?' കൂടി':' more');
   }
-  if(/add.*particip|new participant|പങ്കാളിയെ.*ചേർ/.test(q)){
-    setTimeout(()=>{showPage('participants');openPartModal();},350);
+  const pn=aiNorm(pr.name);
+  const sc=schedule.filter(e=>aiNorm(e.name)===pn)[0];
+  if(sc)h+='<br>📅 '+esc(sc.date||'')+(sc.start?' · '+esc(sc.start):'')+(sc.venue?' · '+esc(sc.venue):'');
+  return h;
+}
+function aiFindTeam(qn){
+  const list=[...teams].sort((a,b)=>aiNorm(b.name).length-aiNorm(a.name).length);
+  for(const t of list){const n=aiNorm(t.name);if(n.length>=3&&aiHas(qn,n))return t}
+  for(const t of list){const n=aiNorm(t.name).replace(/^team /,'');if(n&&aiHas(qn,'team '+n))return t}
+  return null;
+}
+function aiTeamReply(t,ml){
+  const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a));
+  const rank=ranked.findIndex(x=>x.id===t.id)+1;
+  return ml?('<b>'+esc(t.name)+'</b>: <b>'+teamTotal(t)+'</b> പോയിന്റ് · റാങ്ക് '+rank+'/'+teams.length)
+           :('<b>'+esc(t.name)+'</b>: <b>'+teamTotal(t)+'</b> points · rank '+rank+' of '+teams.length);
+}
+function aiPartCard(p,ml){
+  const cat=cats.find(c=>c.id===p.catId);
+  const rg=regs.filter(r=>r.partId===p.id);
+  const tn=[...new Set(rg.map(r=>r.teamId))].map(id=>(teams.find(t=>t.id===id)||{}).name).filter(Boolean);
+  const names=rg.map(r=>{const pr=progs.find(x=>x.id===r.progId);return pr?esc(pr.name):null}).filter(Boolean);
+  const scored=[];
+  teams.forEach(t=>(t.members||[]).forEach(m=>{if(m.name===p.name){const pr=progs.find(x=>x.id===m.pid);if(pr)scored.push(esc(pr.name)+' ('+(Number(m.score)||0)+')')}}));
+  let h='👤 <b>'+esc(p.name)+'</b> · #'+esc(p.chest)+(cat?' · '+esc(cat.name):'')+(p.group?' · '+esc(p.group):'');
+  if(tn.length)h+='<br>'+(ml?'ടീം: ':'Team: ')+esc(tn.join(', '));
+  if(names.length)h+='<br>'+(ml?'പ്രോഗ്രാമുകൾ: ':'Programs: ')+names.join(', ');
+  if(scored.length)h+='<br>'+(ml?'സ്കോർ: ':'Scores: ')+scored.join(', ');
+  return h;
+}
+function aiSearch(qn,ml){
+  const keys=aiKeyTokens(qn);
+  if(!keys.length)return null;
+  const partHits=parts.filter(p=>{
+    const n=aiNorm(p.name),c=aiNorm(p.chest);
+    return keys.some(k=>c&&k===c)||keys.every(k=>k.length>=3&&n.includes(k));
+  });
+  const progHits=progs.filter(pr=>{const n=aiNorm(pr.name);return keys.every(k=>k.length>=3&&n.includes(k))});
+  if(!partHits.length&&!progHits.length)return null;
+  let h='';
+  if(partHits.length){
+    h+=(ml?'കണ്ടെത്തിയ പങ്കാളികൾ ('+partHits.length+'):':'Participants found ('+partHits.length+'):')+'<br>';
+    if(partHits.length<=3)h+=partHits.map(p=>aiPartCard(p,ml)).join('<br><br>');
+    else h+=partHits.slice(0,6).map(p=>'• <b>'+esc(p.name)+'</b> #'+esc(p.chest)).join('<br>')+(partHits.length>6?'<br>… +'+(partHits.length-6):'')+'<br><span style="opacity:.7">'+(ml?'ചെസ്റ്റ് നമ്പർ പറഞ്ഞാൽ വിശദാംശം കാണാം.':'Type a chest number for full details.')+'</span>';
+  }
+  if(progHits.length){
+    if(h)h+='<br><br>';
+    h+=(ml?'കണ്ടെത്തിയ പ്രോഗ്രാമുകൾ ('+progHits.length+'):':'Programs found ('+progHits.length+'):')+'<br>';
+    if(progHits.length<=2)h+=progHits.map(p=>aiProgCard(p,ml)).join('<br><br>');
+    else h+=progHits.slice(0,6).map(pr=>{const c=cats.find(x=>x.id===pr.catId);return '• <b>'+esc(pr.name)+'</b>'+(c?' · '+esc(c.name):'')}).join('<br>')+(progHits.length>6?'<br>… +'+(progHits.length-6):'');
+  }
+  return h;
+}
+function aiProgList(ml){
+  if(!progs.length)return '';
+  return '<br><span style="opacity:.75">'+(ml?'പ്രോഗ്രാമുകൾ: ':'Programs: ')+progs.slice(0,6).map(p=>esc(p.name)).join(', ')+(progs.length>6?'…':'')+'</span>';
+}
+function aiSchedLines(list,ml){
+  return list.map(e=>{
+    const st=e.status==='Live Now'?'🔴 ':e.status==='Completed'?'✅ ':e.status==='Postponed'?'⏸ ':'';
+    return '• '+st+(e.start||'--:--')+(e.end?'–'+esc(e.end):'')+' — <b>'+esc(e.name)+'</b>'+(e.venue?' ('+esc(e.venue)+')':'');
+  }).join('<br>');
+}
+const aiByTime=(a,b)=>((a.date||'')+(a.start||'')).localeCompare((b.date||'')+(b.start||''));
+
+// ── admin: ready-to-share day schedule ──
+window.__aiDrafts=[];
+function aiBuildDay(date,ml){
+  const list=schedule.filter(e=>e.date===date&&e.status!=='Cancelled').sort(aiByTime);
+  if(!list.length)return null;
+  let dl=date;
+  try{dl=new Date(date+'T00:00:00').toLocaleDateString(ml?'ml-IN':'en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){}
+  let t='📅 *'+(ml?'ഷെഡ്യൂൾ':'Schedule')+' — '+dl+'*\n';
+  list.forEach(e=>{
+    const cat=cats.find(c=>c.id===e.catId);
+    const meta=[cat&&cat.name,e.ptype].filter(Boolean).join(' · ');
+    t+='\n🕘 '+(e.start||'--:--')+(e.end?' – '+e.end:'')+(e.status==='Postponed'?'  ('+(ml?'മാറ്റിവെച്ചു':'Postponed')+')':'')
+      +'\n*'+e.name+'*'+(e.code?' ['+e.code+']':'')+(meta?'  ('+meta+')':'')
+      +(e.venue?'\n📍 '+e.venue:'')+'\n';
+  });
+  t+='\n— FestQ';
+  return t;
+}
+function aiCopyDraft(i){
+  const t=window.__aiDrafts[i];if(!t)return;
+  const done=()=>showToast('Copied ✓');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,()=>aiCopyFallback(t,done))}
+  else aiCopyFallback(t,done);
+}
+function aiCopyFallback(t,done){
+  const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');done()}catch(e){showToast('Copy failed',true)}
+  ta.remove();
+}
+function aiShareDraft(i){
+  const t=window.__aiDrafts[i];if(!t)return;
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+}
+
+// ── main brain ──
+function festAIReply(qRaw){
+  const ml=aiIsML(qRaw);
+  const qn=aiNorm(qRaw);
+  const has=re=>re.test(qRaw)||re.test(qn);
+  const today=aiToday();
+  const d=new Date(),nowT=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+
+  const isToday=has(/today|tonight|ഇന്ന/);
+  const isTomorrow=has(/tomorrow|നാളെ/);
+  const isSched=has(/schedule|timetable|ഷെഡ്യൂ|സമയക്രമം/);
+  const isPrep=has(/prepare|make|create|generate|draft|share|തയ്യാറാക്ക|ഉണ്ടാക്ക/);
+  const isResult=has(/result|winner|റിസൽ|റിസൾ|ഫലം|വിജയി/);
+  const isPoints=has(/point|score|പോയിന്റ|സ്കോർ/);
+  const isTeamW=has(/\bteams?\b|ടീം/);
+  const isNext=has(/\bnext\b|അടുത്ത/);
+  const isPartW=has(/participant|chest|പങ്കാളി|ചെസ്റ്റ്/);
+
+  if(qn.split(' ').length<=3&&(/^(hi|hello|hey|hai)\b/.test(qn)||/^(ഹായ്|ഹലോ|നമസ്കാരം|നമസ്തേ)/.test(qn)))
+    return ml?'നമസ്കാരം! ഇന്നത്തെ പ്രോഗ്രാമുകൾ, ടീം പോയിന്റ്, റിസൽട്ട്, പങ്കാളികൾ — എന്തും ചോദിക്കാം.':'Hello! Ask me about today\'s programs, team points, results or participants.';
+
+  // 1. admin: prepare a shareable day schedule
+  let adminNote='';
+  if(isSched&&isPrep){
+    if(aiIsAdmin()){
+      const date=isTomorrow?aiToday(1):today;
+      const txt=aiBuildDay(date,ml);
+      if(!txt)return (ml?(isTomorrow?'നാളത്തേക്ക്':'ഇന്നത്തേക്ക്')+' ഷെഡ്യൂൾ എന്റ്രികൾ ഒന്നുമില്ല. ':'There are no schedule entries for '+(isTomorrow?'tomorrow':'today')+' yet. ')
+        +'<br><span class="ai-chip" style="display:inline-block;margin-top:6px" onclick="showPage(\'schedule\')">'+(ml?'ഷെഡ്യൂൾ പേജ് തുറക്കൂ':'Open Schedule page')+'</span>';
+      const i=window.__aiDrafts.push(txt)-1;
+      return (ml?'ഷെഡ്യൂൾ തയ്യാർ — കോപ്പി ചെയ്യുകയോ WhatsApp-ൽ ഷെയർ ചെയ്യുകയോ ആവാം:':'Your schedule is ready to copy or share on WhatsApp:')
+        +'<div style="white-space:pre-wrap;background:rgba(255,255,255,.7);border:1px solid rgba(41,82,227,.2);border-radius:10px;padding:10px;margin:8px 0;font-size:.78rem;max-height:220px;overflow:auto">'+esc(txt)+'</div>'
+        +'<span class="ai-chip" style="display:inline-block;margin-right:6px" onclick="aiCopyDraft('+i+')">📋 Copy</span>'
+        +'<span class="ai-chip" style="display:inline-block" onclick="aiShareDraft('+i+')">WhatsApp</span>';
+    }
+    adminNote=(ml?'ഷെയർ ചെയ്യാവുന്ന ഷെഡ്യൂൾ ഉണ്ടാക്കുന്നത് അഡ്മിന് മാത്രമാണ്. ഇന്നത്തെ ഷെഡ്യൂൾ ഇതാ:':'Preparing a shareable schedule is for admins. Here is today\'s schedule:')+'<br>';
+  }
+
+  // 2. a specific program by name → results / info
+  if(!isPartW){
+    const ph=aiFindProgs(qn);
+    if(ph.length)return ph.slice(0,3).map(p=>aiProgCard(p,ml)).join('<br><br>');
+  }
+
+  // 3. a specific team, or standings
+  const ft=isPartW?null:aiFindTeam(qn);
+  if(ft&&!isNext&&!(isToday&&isSched))return aiTeamReply(ft,ml);
+  if((isTeamW||(isPoints&&!isResult))&&!isNext){
+    if(!teams.length)return ml?'ടീമുകൾ ഒന്നും ചേർത്തിട്ടില്ല.':'No teams have been added yet.';
+    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a));
+    const left=aiKeyTokens(qn);
+    const note=left.length&&isTeamW?((ml?'ആ ടീം കണ്ടെത്തിയില്ല. നിലവിലെ സ്റ്റാൻഡിംഗ്:':'I couldn\'t find that team. Current standings:')+'<br>'):((ml?'നിലവിലെ ടീം സ്റ്റാൻഡിംഗ്:':'Current team standings:')+'<br>');
+    return note+ranked.map((t,i)=>(i+1)+'. <b>'+esc(t.name)+'</b> — '+teamTotal(t)+(ml?' പോയിന്റ്':' pts')).join('<br>');
+  }
+
+  // 4. today's programs / schedule
+  if(isToday||isTomorrow||adminNote){
+    const date=isTomorrow?aiToday(1):today;
+    const list=schedule.filter(e=>e.date===date&&e.status!=='Cancelled').sort(aiByTime);
+    const head=ml?((isTomorrow?'നാളത്തെ':'ഇന്നത്തെ')+' പ്രോഗ്രാമുകൾ ('+list.length+'):<br>'):((isTomorrow?"Tomorrow's":"Today's")+' programs ('+list.length+'):<br>');
+    if(!list.length)return adminNote+(ml?(isTomorrow?'നാളത്തേക്ക്':'ഇന്നത്തേക്ക്')+' ഷെഡ്യൂൾ ചെയ്ത പ്രോഗ്രാമുകൾ ഒന്നുമില്ല.':'No programs are scheduled for '+(isTomorrow?'tomorrow':'today')+'.');
+    return adminNote+head+aiSchedLines(list,ml);
+  }
+
+  // 5. next program
+  if(isNext){
+    const live=schedule.filter(e=>e.date===today&&e.status==='Live Now');
+    const up=schedule.filter(e=>e.date&&e.status!=='Cancelled'&&e.status!=='Completed'&&e.status!=='Live Now'&&(e.date>today||(e.date===today&&(e.start||'23:59')>=nowT))).sort(aiByTime);
+    let h='';
+    if(live.length)h+=(ml?'🔴 ഇപ്പോൾ നടക്കുന്നത്: ':'🔴 Live now: ')+live.map(e=>'<b>'+esc(e.name)+'</b>').join(', ')+'<br>';
+    if(!up.length)return h+(ml?'വരാനിരിക്കുന്ന പ്രോഗ്രാമുകൾ ഷെഡ്യൂളിൽ ഇല്ല.':'No upcoming programs found in the schedule.');
+    const e=up[0];
+    return h+(ml?'അടുത്ത പ്രോഗ്രാം:<br>':'Next up:<br>')+'<b>'+esc(e.name)+'</b><br>'+esc(e.date||'')+' · '+esc(e.start||'--:--')+(e.venue?' · '+esc(e.venue):'');
+  }
+
+  // 6. whole-schedule request
+  if(isSched){
+    const up=schedule.filter(e=>e.date&&e.date>=today&&e.status!=='Cancelled').sort(aiByTime).slice(0,6);
+    if(!up.length)return ml?'ഷെഡ്യൂളിൽ പ്രോഗ്രാമുകൾ ഒന്നുമില്ല.':'There are no upcoming entries in the schedule.';
+    return (ml?'വരാനിരിക്കുന്ന പ്രോഗ്രാമുകൾ:<br>':'Upcoming programs:<br>')+up.map(e=>'• '+esc(e.date)+' '+esc(e.start||'')+' — <b>'+esc(e.name)+'</b>'+(e.venue?' ('+esc(e.venue)+')':'')).join('<br>');
+  }
+
+  // 7. results
+  if(isResult){
+    const left=aiKeyTokens(qn);
+    if(left.length){
+      const s=aiSearch(qn,ml);
+      if(s)return s;
+      return (ml?'ആ പേരിൽ പ്രോഗ്രാം കണ്ടെത്തിയില്ല.':'I couldn\'t find a program with that name.')+aiProgList(ml);
+    }
+    const ranked=[...teams].sort((a,b)=>teamTotal(b)-teamTotal(a)).slice(0,3);
+    if(!ranked.some(t=>teamTotal(t)>0))return ml?'ഇതുവരെ സ്കോർ എന്റ്രി ചെയ്തിട്ടില്ല.':'No scores have been entered yet.';
+    const medals=['🥇','🥈','🥉'];
+    setTimeout(()=>showPage('liveresults'),500);
+    return (ml?'ലൈവ് റിസൽട്ട്‌സ് തുറക്കുന്നു...<br>':'Opening Live Results…<br>')+ranked.map((t,i)=>(medals[i]||'')+' <b>'+esc(t.name)+'</b> — '+teamTotal(t)+(ml?' പോയിന്റ്':' pts')).join('<br>');
+  }
+
+  // 8. add participant
+  if(has(/add.*particip|new participant|register.*particip/)||has(/പങ്കാളി.*ചേർ|പങ്കാളിയെ.*ചേർ/)){
+    setTimeout(()=>{showPage('participants');openPartModal()},350);
     return ml?'പുതിയ പങ്കാളിയെ ചേർക്കാനുള്ള ഫോം തുറക്കുന്നു...':'Opening the Add Participant form…';
   }
-  if(/next program|next event|അടുത്ത പ്രോഗ്രാം|അടുത്തത്/.test(q)){
-    const upcoming=schedule.filter(e=>e.date && (e.date>today || (e.date===today && (e.start||'23:59')>=nowT)))
-      .sort((a,b)=>((a.date||'')+(a.start||'')).localeCompare((b.date||'')+(b.start||'')));
-    if(!upcoming.length) return ml?'വരാനിരിക്കുന്ന പ്രോഗ്രാമുകൾ ഒന്നും ഷെഡ്യൂളിൽ ഇല്ല.':'No upcoming programs found in the schedule.';
-    const e=upcoming[0];
-    return (ml?'അടുത്ത പ്രോഗ്രാം:<br>':'Next up:<br>')+'<b>'+esc(e.name)+'</b><br>'+(e.date||'')+' · '+(e.start||'--:--')+(e.venue?' · '+esc(e.venue):'');
-  }
-  if(/how to use|explain|help|എങ്ങനെ ഉപയോഗ|സഹായ/.test(q)){
+
+  // 9. how to use
+  if(has(/how to use|explain|help|എങ്ങനെ ഉപയോഗ|സഹായ/)){
     setTimeout(()=>showPage('help'),350);
     return ml?'FestQ എങ്ങനെ ഉപയോഗിക്കാം എന്ന പേജ് തുറക്കുന്നു — എല്ലാ സ്റ്റെപ്പുകളും അവിടെ കാണാം.':'Opening the "How to use FestQ" guide — you\'ll find full step-by-step instructions there.';
   }
-  return ml?'ക്ഷമിക്കണം, മനസ്സിലായില്ല. Results, Schedule, Participants, Teams അല്ലെങ്കിൽ Competition-നെ കുറിച്ച് ചോദിക്കൂ.':"Sorry, I didn't quite catch that — try asking about Results, Schedule, Participants, Teams or Competition, or tap a quick option below.";
-}
 
+  // 10. find participants / programs / results by name or chest number
+  const s=aiSearch(qn,ml);
+  if(s)return s;
+
+  return ml?'ക്ഷമിക്കണം, മനസ്സിലായില്ല. ഇങ്ങനെ ചോദിച്ചുനോക്കൂ: “ഇന്ന് എന്തൊക്കെ programs ഉണ്ട്?”, “Team A എത്ര points?”, “Stage Speech result കാണിക്കൂ”.'
+    :'Sorry, I didn\'t catch that. Try: "What programs are today?", "Team A points", "Stage Speech result", or a participant\'s name / chest number.';
+}
 
 // ═══ PARTICIPANT PHOTOS ═══
 function partAvatar(pid,name,sz){
