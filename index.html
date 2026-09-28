@@ -335,6 +335,11 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 .ai-send{background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:15px;flex-shrink:0}
 @media(max-width:480px){.ai-panel{right:12px;left:12px;width:auto;bottom:82px}}
 
+.ph-row{display:flex;align-items:center;gap:10px}
+.ph-prev{width:64px;height:64px;border-radius:50%;background:rgba(41,82,227,.08);border:1px dashed rgba(41,82,227,.35);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0}
+.ph-prev img{width:100%;height:100%;object-fit:cover}
+.ph-row .btn{padding:8px 14px;font-size:.78rem;cursor:pointer}
+
 </style>
 <script type="module">import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -466,9 +471,9 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 <!-- ANNOUNCEMENT MODAL -->
 <div class="modal-overlay" id="annModal"><div class="modal-box" style="max-width:440px"><button class="modal-close" onclick="closeModal('annModal')">✕</button><div class="modal-title" id="annModalTitle">+ NEW ANNOUNCEMENT</div><div class="form-field"><label>TITLE</label><input class="form-input" id="annTitle" placeholder="Announcement title..."></div><div class="form-field"><label>MESSAGE</label><textarea class="form-input" id="annMsg" rows="4" placeholder="Type your announcement here..." style="resize:vertical"></textarea></div><div class="form-field"><label>TYPE</label><select class="form-input" id="annType"><option value="info">Info</option><option value="important">Important</option><option value="result">Result</option><option value="schedule">Schedule</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('annModal')">Cancel</button><button class="btn btn-primary" onclick="saveAnn()">Publish</button></div></div>
 </div><!-- REGISTRATION MODAL -->
-<div class="modal-overlay" id="regModal"><div class="modal-box" style="max-width:440px"><button class="modal-close" onclick="closeModal('regModal')">✕</button><div class="modal-title" id="regModalTitle">+ REGISTER PARTICIPANT</div><div class="form-field"><label>FULL NAME</label><input class="form-input" id="regName" placeholder="Participant name..."></div><div class="form-field"><label>CHEST NUMBER</label><input class="form-input" id="regChest" placeholder="e.g. 101"></div><div class="form-field"><label>CATEGORY</label><select class="form-input" id="regCatSel"><option value="">— Select Category —</option></select></div><div class="form-field"><label>COMPETITIONS <span style="color:var(--muted);font-weight:400">(select one or more)</span></label><div id="regProgCheckList" style="max-height:180px;overflow-y:auto;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px"></div></div><div class="form-field"><label>TEAM</label><select class="form-input" id="regTeamSel"><option value="">— Select Team —</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('regModal')">Cancel</button><button class="btn btn-primary" onclick="saveReg()">Register</button></div></div>
+<div class="modal-overlay" id="regModal"><div class="modal-box" style="max-width:440px"><button class="modal-close" onclick="closeModal('regModal')">✕</button><div class="modal-title" id="regModalTitle">+ REGISTER PARTICIPANT</div><div class="form-field"><label>PHOTO <span style="color:var(--muted);font-weight:400">(optional)</span></label><div class="ph-row"><div class="ph-prev" id="regPhotoPrev">📷</div><label class="btn btn-outline">Add photo<input type="file" accept="image/*" hidden onchange="photoPick('reg',this)"></label><button type="button" class="btn btn-outline" id="regPhotoRm" style="display:none" onclick="photoClear('reg')">Remove</button></div></div><div class="form-field"><label>FULL NAME</label><input class="form-input" id="regName" placeholder="Participant name..."></div><div class="form-field"><label>CHEST NUMBER</label><input class="form-input" id="regChest" placeholder="e.g. 101"></div><div class="form-field"><label>CATEGORY</label><select class="form-input" id="regCatSel"><option value="">— Select Category —</option></select></div><div class="form-field"><label>COMPETITIONS <span style="color:var(--muted);font-weight:400">(select one or more)</span></label><div id="regProgCheckList" style="max-height:180px;overflow-y:auto;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px"></div></div><div class="form-field"><label>TEAM</label><select class="form-input" id="regTeamSel"><option value="">— Select Team —</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('regModal')">Cancel</button><button class="btn btn-primary" onclick="saveReg()">Register</button></div></div>
 </div><!-- PARTICIPANT -->
-<div class="modal-overlay" id="partModal"><div class="modal-box" style="max-width:420px"><button class="modal-close" onclick="closeModal('partModal')">✕</button><div class="modal-title" id="partModalTitle">+ ADD PARTICIPANT</div><div class="form-field"><label>FULL NAME</label><input class="form-input" id="ptName" placeholder="Participant name"></div><div class="form-field"><label>CHEST NUMBER</label><input class="form-input" id="ptChest" placeholder="e.g. 101, A-25..."></div><div class="form-field"><label>CATEGORY</label><select class="form-input" id="ptCat"><option value="">— Select Category —</option></select></div><div class="form-field"><label>TEAM</label><select class="form-input" id="ptGroup"><option value="">— Select Team —</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('partModal')">Cancel</button><button class="btn btn-primary" onclick="savePart()">Save</button></div></div>
+<div class="modal-overlay" id="partModal"><div class="modal-box" style="max-width:420px"><button class="modal-close" onclick="closeModal('partModal')">✕</button><div class="modal-title" id="partModalTitle">+ ADD PARTICIPANT</div><div class="form-field"><label>PHOTO <span style="color:var(--muted);font-weight:400">(optional)</span></label><div class="ph-row"><div class="ph-prev" id="ptPhotoPrev">📷</div><label class="btn btn-outline">Add photo<input type="file" accept="image/*" hidden onchange="photoPick('pt',this)"></label><button type="button" class="btn btn-outline" id="ptPhotoRm" style="display:none" onclick="photoClear('pt')">Remove</button></div></div><div class="form-field"><label>FULL NAME</label><input class="form-input" id="ptName" placeholder="Participant name"></div><div class="form-field"><label>CHEST NUMBER</label><input class="form-input" id="ptChest" placeholder="e.g. 101, A-25..."></div><div class="form-field"><label>CATEGORY</label><select class="form-input" id="ptCat"><option value="">— Select Category —</option></select></div><div class="form-field"><label>TEAM</label><select class="form-input" id="ptGroup"><option value="">— Select Team —</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('partModal')">Cancel</button><button class="btn btn-primary" onclick="savePart()">Save</button></div></div>
 </div><!-- CATEGORY -->
 <div class="modal-overlay" id="catModal"><div class="modal-box"><button class="modal-close" onclick="closeModal('catModal')">✕</button><div class="modal-title">+ ADD CATEGORY</div><div class="form-field"><label>CATEGORY NAME</label><input class="form-input" id="catName" placeholder="e.g. Arts, Sports, Academic..."></div><div class="form-field"><label>COLOR</label><select class="form-input" id="catColor"><option value="0">Purple</option><option value="1">Red</option><option value="2">Green</option><option value="3">Gold</option><option value="4">Blue</option><option value="5">Orange</option><option value="6">Cyan</option><option value="7">Crimson</option><option value="8">Violet</option><option value="9">Magenta</option></select></div><div class="modal-actions"><button class="btn btn-outline" onclick="closeModal('catModal')">Cancel</button><button class="btn btn-primary" onclick="saveCategory()">Save Category</button></div></div>
 </div><!-- PROGRAM -->
@@ -545,7 +550,7 @@ function sd(k,v){
   }
   localStorage.setItem(nsKey(k),JSON.stringify(v));
   fbData[k] = v;
-  if (k === 'pr_poster_logo' || k === 'pr_home_banner' || k === 'pr_poster_custom_bg') { pushAssetToFirestore(k, v); return; } // own doc — see pushAssetToFirestore
+  if (k === 'pr_poster_logo' || k === 'pr_home_banner' || k === 'pr_poster_custom_bg' || k === 'pr_part_photos') { pushAssetToFirestore(k, v); return; } // own doc — see pushAssetToFirestore
   if (k === 'pr_gallery' || k === 'pr_custom_design' || k === 'pr_custom_design_bg') return; // stay local-only (Firestore 1MB doc limit)
   pushToFirestore(k, v, false);
 }
@@ -646,6 +651,7 @@ async function initFirebaseSync(onUpdate) {
     } catch(e){}
   if (typeof posterLogo !== 'undefined') posterLogo = ld('pr_poster_logo', posterLogo);
   if (typeof homeBanner !== 'undefined') homeBanner = ld('pr_home_banner', homeBanner);
+  if (typeof partPhotos !== 'undefined') partPhotos = ld('pr_part_photos', {});
   fbReady = true;
   if (fbListenerActive) return; // listener already attached for this session
   fbListenerActive = true;
@@ -901,6 +907,7 @@ function reloadAllData(){
   if (typeof posterTplOpts !== 'undefined') posterTplOpts = ld('pr_poster_tpl', {eventName:'Annual Arts Fest 2026', edition:'', org:'', venue:'', desc:'', accent:'#e8d84a', date:''});
   if (typeof posterLogo !== 'undefined') posterLogo = ld('pr_poster_logo', '');
   if (typeof homeBanner !== 'undefined') homeBanner = ld('pr_home_banner', '');
+  if (typeof partPhotos !== 'undefined') partPhotos = ld('pr_part_photos', {});
   if (typeof cdElements !== 'undefined') cdElements = ld('pr_custom_design', []);
   if (typeof cdBackground !== 'undefined') cdBackground = ld('pr_custom_design_bg', { type: 'color', value: '#15161c' });
   if (typeof posterBgChoice !== 'undefined') posterBgChoice = ld('pr_poster_bg_choice', '2');
@@ -1240,11 +1247,14 @@ function renderParticipants() {
 
 // ═══ REGISTRATION ═══
 let regs = ld('pr_regs', []); // [{id, partId, progId, teamId, time}]
+let partPhotos = ld('pr_part_photos', {}); // {partId: small JPEG dataURL} — own Firestore asset doc
+let regPhotoData = '', ptPhotoData = '';
 
 function openRegModal() {
   document.getElementById('regModalTitle').textContent = '+ REGISTER PARTICIPANT';
   document.getElementById('regName').value = '';
   document.getElementById('regChest').value = '';
+  regPhotoData = ''; photoPreview('reg', '');
   // populate category dropdown
   const cSel = document.getElementById('regCatSel');
   cSel.innerHTML = '<option value="">— Select Category —</option>' +
@@ -1282,6 +1292,8 @@ function saveReg() {
   sd('pr_parts', parts);
   }
 
+  if (regPhotoData) { partPhotos[part.id] = regPhotoData; sd('pr_part_photos', partPhotos); }
+
   // Register for each selected competition, skipping ones already registered
   let added = 0, skipped = 0;
   progIds.forEach(progId => {
@@ -1311,6 +1323,7 @@ function delReg(rid) {
   if (!stillRegistered) {
   parts = parts.filter(p =>p.id !== reg.partId);
   sd('pr_parts', parts);
+  if (partPhotos[reg.partId]) { delete partPhotos[reg.partId]; sd('pr_part_photos', partPhotos); }
   if (document.getElementById('nbPart')) document.getElementById('nbPart').textContent = parts.length;
     }
   }
@@ -1361,7 +1374,7 @@ function renderRegistrations() {
   const prog = progs.find(p=>p.id==r.progId);
   const team = teams.find(t=>t.id==r.teamId);
   const cat = prog ? cats.find(c=>c.id===prog.catId) : null;
-  return `<tr><td style="color:var(--muted);font-size:.76rem">${i+1}</td><td><div style="font-weight:600">${part?esc(part.name):'Unknown'}</div><div style="font-size:.7rem;color:var(--muted)">#${part?esc(part.chest):'—'}</div></td><td><div style="font-weight:600;font-size:.85rem">${prog?esc(prog.name):'—'}</div><div style="font-size:.7rem;color:var(--muted)">${cat?esc(cat.name):''}${prog&&prog.type?' · '+prog.type:''}</div></td><td style="font-size:.84rem;color:var(--accent);font-weight:600">${team?esc(team.name):'—'}</td><td><button class="btn btn-red btn-xs" onclick="delReg('${r.id}')">✕</button></td></tr>`;
+  return `<tr><td style="color:var(--muted);font-size:.76rem">${i+1}</td><td><div style="display:flex;align-items:center;gap:10px">${part?partAvatar(part.id,part.name,36):''}<div><div style="font-weight:600">${part?esc(part.name):'Unknown'}</div><div style="font-size:.7rem;color:var(--muted)">#${part?esc(part.chest):'—'}</div></div></div></td><td><div style="font-weight:600;font-size:.85rem">${prog?esc(prog.name):'—'}</div><div style="font-size:.7rem;color:var(--muted)">${cat?esc(cat.name):''}${prog&&prog.type?' · '+prog.type:''}</div></td><td style="font-size:.84rem;color:var(--accent);font-weight:600">${team?esc(team.name):'—'}</td><td><button class="btn btn-red btn-xs" onclick="delReg('${r.id}')">✕</button></td></tr>`;
     }).join('')}</tbody></table></div><div style="font-size:.72rem;color:var(--muted);margin-top:8px">${list.length} of ${regs.length} registrations shown</div>`;
 }
 
@@ -1373,6 +1386,7 @@ function openPartModal(pid){
   document.getElementById('partModalTitle').textContent=pid?'EDIT PARTICIPANT':'+ ADD PARTICIPANT';
   document.getElementById('ptName').value=p?p.name:'';
   document.getElementById('ptChest').value=p?p.chest:'';
+  ptPhotoData=(p&&partPhotos[p.id])||'';photoPreview('pt',ptPhotoData);
   const grpSel=document.getElementById('ptGroup');
   grpSel.innerHTML='<option value="">— Select Team —</option>'+teams.map(t=>`<option value="${t.id}" ${p&&p.group==t.id?'selected':''}>${esc(t.name)}</option>`).join('');
   if(p) grpSel.value=p.group||'';
@@ -1394,6 +1408,7 @@ function savePart(){
   if(parts.find(p=>p.chest===chest)) return showToast('Chest number already exists!',true);
   parts.push({id:'pt'+Date.now(),name,chest,catId,group});showToast('Participant added ✓');
   }
+  {const pid=editPartId||parts.find(p=>p.chest===chest)?.id;if(pid){if(ptPhotoData)partPhotos[pid]=ptPhotoData;else delete partPhotos[pid];sd('pr_part_photos',partPhotos);}}
   sd('pr_parts',parts);closeModal('partModal');renderParticipants();
   if(document.getElementById('nbPart')) document.getElementById('nbPart').textContent=parts.length;
   if(document.getElementById('nbTeams')) document.getElementById('nbTeams').textContent=teams.length;
@@ -1401,7 +1416,7 @@ function savePart(){
 }
 function delPart(pid){
   if(!confirm('Delete this participant?')) return;
-  parts=parts.filter(p=>p.id!==pid);sd('pr_parts',parts);renderParticipants();showToast('Removed.');
+  parts=parts.filter(p=>p.id!==pid);sd('pr_parts',parts);if(partPhotos[pid]){delete partPhotos[pid];sd('pr_part_photos',partPhotos);}renderParticipants();showToast('Removed.');
   if(document.getElementById('nbPart')) document.getElementById('nbPart').textContent=parts.length;
   if(document.getElementById('nbTeams')) document.getElementById('nbTeams').textContent=teams.length;
   if(document.getElementById('nbAnn')) document.getElementById('nbAnn').textContent=anns.length;
@@ -1433,7 +1448,7 @@ function renderParticipants(){
   wrap.innerHTML=`<div style="overflow-x:auto"><table class="lb-table" style="width:100%"><thead><tr><th>#</th><th>NAME</th><th>CHEST NO.</th><th>CATEGORY</th><th>TEAM</th></tr></thead><tbody>${list.map((p,i)=>{
   const cat=cats.find(c=>c.id===p.catId);
   const team=teams.find(t=>t.id==p.group);
-  return `<tr><td style="color:var(--muted);font-size:.76rem">${i+1}</td><td style="font-weight:600">${esc(p.name)}</td><td style="font-family:'Inter','Manjari',sans-serif;color:var(--accent);font-weight:600">${esc(p.chest)}</td><td>${cat?`<span class="mem-cat-tag tc${cat.color} bg${cat.color}">${cat.emoji} ${esc(cat.name)}</span>`:'<span style="color:var(--muted)">—</span>'}</td><td style="font-family:'Inter','Manjari',sans-serif;font-size:.82rem;font-weight:600">${team?esc(team.name):'—'}</td></tr>`;
+  return `<tr><td style="color:var(--muted);font-size:.76rem">${i+1}</td><td style="font-weight:600"><div style="display:flex;align-items:center;gap:10px">${partAvatar(p.id,p.name,32)}<span>${esc(p.name)}</span></div></td><td style="font-family:'Inter','Manjari',sans-serif;color:var(--accent);font-weight:600">${esc(p.chest)}</td><td>${cat?`<span class="mem-cat-tag tc${cat.color} bg${cat.color}">${cat.emoji} ${esc(cat.name)}</span>`:'<span style="color:var(--muted)">—</span>'}</td><td style="font-family:'Inter','Manjari',sans-serif;font-size:.82rem;font-weight:600">${team?esc(team.name):'—'}</td></tr>`;
     }).join('')}
     </tbody></table></div><div style="font-size:.72rem;color:var(--muted);font-family:'Inter','Manjari',sans-serif;margin-top:10px;padding:0 4px">${list.length} of ${parts.length} participants</div>`;
 }
@@ -3282,6 +3297,7 @@ function applyPublicSnapshotToGlobals(raw){
   try { liveSettings = JSON.parse(raw.pr_live || '{}'); } catch(e){ liveSettings = {}; }
   try { if (raw.pr_poster_logo) posterLogo = JSON.parse(raw.pr_poster_logo); } catch(e){}
   try { if (raw.pr_home_banner) homeBanner = JSON.parse(raw.pr_home_banner); } catch(e){}
+  try { partPhotos = raw.pr_part_photos ? JSON.parse(raw.pr_part_photos) : {}; } catch(e){ partPhotos = {}; }
   try { if (raw.pr_poster_custom_bg) posterCustomBg = JSON.parse(raw.pr_poster_custom_bg); } catch(e){}
   try { if (raw.pr_poster_bg_choice) posterBgChoice = JSON.parse(raw.pr_poster_bg_choice); } catch(e){}
   try { if (raw.pr_poster_tpl) posterTplOpts = JSON.parse(raw.pr_poster_tpl); } catch(e){}
@@ -3440,6 +3456,9 @@ function generatePublicHTML(overrideSettings, returnOnly) {
 
   // ── Shared search lookup (used inline in hero when Home is on, else as its own section) ──
   let searchInnerHTML = '', searchDataScript = '';
+  const pubPhotoMap = {};
+  parts.forEach(p => { if (partPhotos[p.id]) pubPhotoMap[p.chest] = partPhotos[p.id]; });
+  const photosDataScript = Object.keys(pubPhotoMap).length ? `<script>window.__prPhotos = ${JSON.stringify(pubPhotoMap)};document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('img.pph[data-pc]').forEach(function(im){var s=window.__prPhotos[im.getAttribute('data-pc')];if(s){im.src=s;im.style.display='block'}})});<\/script>` : '';
   if (incSearch && parts.length) {
   navLinks.unshift(`<a href="#search" class="nav-link" style="color:${accent2}">Find My Result</a>`);
   const lookup = {};
@@ -3629,7 +3648,7 @@ function generatePublicHTML(overrideSettings, returnOnly) {
   const posterIdx = posterIdxByPid[prog.id];
   const posterBtn = posterIdx !== undefined ? `<button class="view-poster-btn" onclick='openProgramPoster(${posterIdx}, ${JSON.stringify(prog.name)})'>Poster</button>` : '';
   return { catId: String(prog.catId || ''), html: `<div class="cat-block" data-cat="${esc(String(prog.catId || ''))}"><div class="cat-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${esc(prog.name)}${cat ? ' <span style="color:#666;font-weight:400">· '+esc(cat.name)+'</span>' : ''}</span>${posterBtn}
-          </div><div class="lb-wrap">${entries.map((e,i) => `<div class="lb-row${i<3?' lb-top'+(i+1):''}"><span class="lb-rank${i<3?' lb-rank-top':''}">${i+1}</span><span class="lb-name">${esc(e.name)}${e.chest?` <span style="color:#777;font-size:.72rem;font-family:'Inter','Manjari',sans-serif">#${esc(e.chest)}</span>`:''}<br><span style="font-size:.68rem;color:#888">${esc(e.teamName)}</span></span>${incScores ? `<span class="lb-pts" style="color:${accent2}">${e.score}</span>` : ''}
+          </div><div class="lb-wrap">${entries.map((e,i) => `<div class="lb-row${i<3?' lb-top'+(i+1):''}"><span class="lb-rank${i<3?' lb-rank-top':''}">${i+1}</span>${e.chest&&pubPhotoMap[e.chest]?`<img class="pph" data-pc="${esc(e.chest)}" alt="">`:''}<span class="lb-name">${esc(e.name)}${e.chest?` <span style="color:#777;font-size:.72rem;font-family:'Inter','Manjari',sans-serif">#${esc(e.chest)}</span>`:''}<br><span style="font-size:.68rem;color:#888">${esc(e.teamName)}</span></span>${incScores ? `<span class="lb-pts" style="color:${accent2}">${e.score}</span>` : ''}
             </div>`).join('')}
           </div></div>` };
       }).filter(Boolean);
@@ -3770,6 +3789,9 @@ function generatePublicHTML(overrideSettings, returnOnly) {
     .lb-top3 .lb-rank-top { background: #CD7F32; }
     .lb-crown { position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:.85rem; }
     .lb-name { flex: 1; font-size: .93rem; font-weight: 700; min-width:0; }
+    .pph { display:none; width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0; border:1px solid var(--border); }
+    .sr-head { display:flex; align-items:center; gap:12px; }
+    .sr-head .pph { width:56px; height:56px; }
     .lb-pts { font-family: 'Inter', 'Manjari', sans-serif; font-weight: 800; font-size: 1.05rem; flex-shrink:0; }
     .lb-top1 .lb-pts { color: var(--gold, #FFD700); font-size:1.2rem; }
 
@@ -3862,6 +3884,7 @@ function generatePublicHTML(overrideSettings, returnOnly) {
       <div class="intro-title">${esc(d.title)||'EVENT'}</div>${d.tagline ? `<div class="intro-tagline">${esc(d.tagline)}</div>` : ''}
       <div class="intro-loader"><div class="intro-loader-bar"></div></div><div class="intro-skip">TAP TO SKIP</div></div></div><script>document.body.style.overflow='hidden';setTimeout(function(){document.body.style.overflow='';var s=document.getElementById('introSplash');if(s)s.remove();},3200);<\/script>` : ''}
   ${searchDataScript}
+  ${photosDataScript}
   ${standingsDataScript}
   ${galleryDataScript}
   <nav class="top-nav"><div class="nav-brand-row"><div class="nav-brand">${esc(d.title)||'FestQ'}</div><span class="live-badge"><span class="live-badge-dot"></span>LIVE</span></div><div class="nav-pills" id="navPills">${navLinks.join('')}
@@ -4030,7 +4053,8 @@ function generatePublicHTML(overrideSettings, returnOnly) {
   const rowsHtml = rec.results.length
         ? rec.results.map(r => '<div class="sr-row"><span class="sr-rank">#' + r.rank + '</span><div class="sr-prog">' + r.program + '<div class="sr-team">' + r.team + '</div></div><span class="sr-score">' + r.score + ' pts</span></div>').join('')
         : '<div class="sr-empty">No results recorded yet for this participant.</div>';
-  box.innerHTML = '<div class="sr-card"><div class="sr-name">' + rec.name + '</div><div class="sr-meta">Chest No: ' + chest + (rec.category ? ' · ' + rec.category : '') + (rec.group ? ' · ' + rec.group : '') + '</div><div style="margin-top:12px">' + rowsHtml + '</div></div>';
+  var ph = (window.__prPhotos || {})[chest];
+  box.innerHTML = '<div class="sr-card"><div class="sr-head">' + (ph ? '<img class="pph" style="display:block" src="' + ph + '" alt="">' : '') + '<div><div class="sr-name">' + rec.name + '</div><div class="sr-meta">Chest No: ' + chest + (rec.category ? ' · ' + rec.category : '') + (rec.group ? ' · ' + rec.group : '') + '</div></div></div><div style="margin-top:12px">' + rowsHtml + '</div></div>';
     }
   document.getElementById('chestSearchInput')?.addEventListener('keydown', function(e){ if (e.key === 'Enter') searchByChest(); });
 
@@ -5436,6 +5460,47 @@ function festAIReply(qRaw){
   return ml?'ക്ഷമിക്കണം, മനസ്സിലായില്ല. Results, Schedule, Participants, Teams അല്ലെങ്കിൽ Competition-നെ കുറിച്ച് ചോദിക്കൂ.':"Sorry, I didn't quite catch that — try asking about Results, Schedule, Participants, Teams or Competition, or tap a quick option below.";
 }
 
+
+// ═══ PARTICIPANT PHOTOS ═══
+function partAvatar(pid,name,sz){
+  sz=sz||34;
+  const ph=partPhotos[pid];
+  if(ph) return '<img src="'+ph+'" alt="" style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(20,20,40,.1)">';
+  const ch=((name||'?').trim().charAt(0)||'?').toUpperCase();
+  return '<span style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:rgba(41,82,227,.1);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:'+Math.round(sz*.42)+'px;flex-shrink:0">'+esc(ch)+'</span>';
+}
+function compressPhoto(file,cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const S=140,cv=document.createElement('canvas');cv.width=cv.height=S;
+      const m=Math.min(img.width,img.height);
+      cv.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
+      cb(cv.toDataURL('image/jpeg',0.65));
+    };
+    img.onerror=()=>showToast('Could not read that image',true);
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function photoPreview(kind,d){
+  const el=document.getElementById(kind+'PhotoPrev'),rm=document.getElementById(kind+'PhotoRm');
+  if(!el) return;
+  el.innerHTML=d?'<img src="'+d+'" alt="">':'📷';
+  if(rm) rm.style.display=d?'inline-flex':'none';
+}
+function photoPick(kind,input){
+  const f=input.files&&input.files[0];
+  if(!f) return;
+  if(!/^image\//.test(f.type)){showToast('Please choose an image',true);return}
+  compressPhoto(f,d=>{if(kind==='reg')regPhotoData=d;else ptPhotoData=d;photoPreview(kind,d)});
+  input.value='';
+}
+function photoClear(kind){
+  if(kind==='reg')regPhotoData='';else ptPhotoData='';
+  photoPreview(kind,'');
+}
 </script>
 <button class="ai-fab" id="aiFab" onclick="toggleAI()" aria-label="FestQ AI Assistant">💬<span class="ai-fab-dot"></span></button>
 <div class="ai-panel" id="aiPanel">
