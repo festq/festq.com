@@ -927,6 +927,7 @@ async function finishLogin(f, btn, origText){
   try { await initFirebaseSync(refreshAllViews); } catch(e){}
   reloadAllData();
   recordLoginDevice();
+  try { if (typeof gallery !== 'undefined' && gallery.length) syncGallerySubset(); } catch(e){}
   btn.textContent = origText; btn.disabled = false;
 
   const isAdmin=f.username==='admin'||f.isAdmin===true;
@@ -3245,21 +3246,29 @@ function compressDataUrl(dataUrl, maxDim, quality) {
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(img, 0, 0, w, h);
-  resolve(keepAlpha && /png|webp|gif|svg/i.test(file.type || '') ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', quality));
+  resolve(canvas.toDataURL('image/jpeg', quality));
     };
   img.onerror = reject;
   img.src = dataUrl;
   });
 }
-// The live link can't hold the whole gallery (Firestore doc limit), so we
-// push a small heavily-compressed preview — first 5 photos only.
+// The live link shares one Firestore doc (1MB limit) with the logo/banner/participant
+// photos, so we push a compressed preview: up to 12 photos, shrunk until the whole
+// set fits in ~420KB (most photos first, extra ones dropped only if still too big).
 async function syncGallerySubset() {
   try {
-  const subset = gallery.slice(0, 5);
-  const compressed = await Promise.all(subset.map(g =>
-  compressDataUrl(g.src, 640, 0.55).then(src => ({ src, name: g.name }))
-    ));
-  pushAssetToFirestore('pr_gallery_sync', compressed);
+    if (!gallery.length) { pushAssetToFirestore('pr_gallery_sync', []); return; }
+    const LIMIT = 420000;
+    let dim = 800, q = 0.6, list = [];
+    for (let attempt = 0; attempt < 5; attempt++) {
+      list = await Promise.all(gallery.slice(0, 12).map(g =>
+        compressDataUrl(g.src, dim, q).then(src => ({ src, name: g.name }))
+      ));
+      if (JSON.stringify(list).length <= LIMIT) break;
+      dim = Math.round(dim * 0.8); q = Math.max(0.4, q - 0.07);
+    }
+    while (list.length > 1 && JSON.stringify(list).length > LIMIT) list.pop();
+    pushAssetToFirestore('pr_gallery_sync', list);
   } catch(e) { console.warn('Gallery preview sync failed:', e); }
 }
 function addGalleryPhotos(input) {
@@ -3518,6 +3527,7 @@ function slugify(text){
 }
 function generatePublicLink(){
   savePublishSettings();
+  try { if (typeof gallery !== 'undefined' && gallery.length) syncGallerySubset(); } catch(e){}
   if (!FB_DOC_ID) return showToast('ആദ്യം login ചെയ്യുക', true);
   const base = slugify(homeData && homeData.title);
   if (curUser) {
@@ -3593,6 +3603,8 @@ function showPublicLinkError(){
 }
 
 async function initPublicLinkViewer(rawKey){
+  // Public visitors never see the admin AI Assistant (button + panel).
+  try { const st=document.createElement('style'); st.textContent='#aiFab,#aiPanel{display:none!important}'; document.head.appendChild(st); } catch(e){}
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('publicLiveWrap').style.display = 'block';
 
